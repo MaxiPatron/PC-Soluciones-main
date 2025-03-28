@@ -1,8 +1,6 @@
 import "./FooterStyle.css";
 import React, { forwardRef } from "react";
 import { FaHome, FaMailBulk } from "react-icons/fa";
-import { FaDownload } from "react-icons/fa";
-import pdf from "../assets/curriculum.pdf";
 import { AiFillGithub, AiFillInstagram } from "react-icons/ai";
 import { FaLinkedinIn } from "react-icons/fa";
 const Footer = forwardRef((props, ref) => {
@@ -31,16 +29,6 @@ const Footer = forwardRef((props, ref) => {
                                 <a href="https://www.instagram.com/maximo_patron" className="icon-divour home-social-icons"><AiFillInstagram /></a>
                             </li>
                             <div className="right">
-                            <a
-                                className="btn"
-                                href={pdf}
-                                download="Curriculum_Maximo_Patron.pdf"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <FaDownload />
-                                &nbsp;Download CV
-                            </a>
                             </div>
                         </ul>
 
