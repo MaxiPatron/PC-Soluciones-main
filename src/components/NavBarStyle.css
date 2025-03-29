@@ -11,11 +11,12 @@
 
 .header-bg {
     background-color: rgba(0, 0, 0, 0.9);
-    transition: 0.5s;
+    transition: background-color 0.5s;
 }
 
 .navbar {
     display: flex;
+    list-style: none;
 }
 
 .navbar li {
@@ -25,11 +26,15 @@
 .navbar li a {
     font-size: 1.2rem;
     font-weight: 500;
+    color: #fff;
+    text-decoration: none;
 }
 
 .fabar {
     display: none;
+    cursor: pointer;
 }
+
 
 @media screen and (max-width: 1040px) {
     .navbar {
@@ -38,16 +43,18 @@
         align-items: center;
         width: 100%;
         height: 100vh;
-        background: rgb(0, 0, 0, 0.9);
+        background-color: rgba(0, 0, 0, 0.9);
         position: absolute;
         top: 0;
         left: -100%;
         z-index: -3;
-        transition: 0.3s;
+        transition: left 0.3s;
+        gap: 2rem; 
     }
 
     .navbar.active {
         left: 0;
+        z-index: 5;
     }
 
     .navbar li {
@@ -59,6 +66,42 @@
     }
 
     .fabar {
-        display: initial;
+        display: block;
     }
+}
+.search-input {
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    padding: 8px 12px;
+    width: 300px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.search-icon {
+    background-color: #cc00ff;
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    transition: background-color 0.3s ease;
+    border: none;
+}
+
+.search-icon:hover {
+    background-color: #5400b3;
 }

@@ -1,116 +1,116 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
 
 *{
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  box-sizing: border-box ;
+  margin: 0 ;
+  padding: 0 ;
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: smooth ;
 }
 
 body{
-  font-family: "Josefin Sans";
-  background-color: #000;
+  font-family: "Josefin Sans" ;
+  background-color: #000 ;
 }
 
 h1, h4, p, a{
-  color: #fff;
-  text-decoration: none;
+  color: #fff ;
+  text-decoration: none ;
 }
 
 ul{
-  list-style-type: none;
+  list-style-type: none ;
 }
 
 .btn {
-  padding: 12px 32px;
-  font-size: 1rem;
-  text-transform: uppercase;
-  background: rgb(15, 135, 248);
-  color: #222;
-  border: 2px solid #101364;
-  font-weight: 600;
-  cursor: pointer;
+  padding: 12px 32px ;
+  font-size: 1rem ;
+  text-transform: uppercase ;
+  background: rgb(15, 135, 248) ;
+  color: #222 ;
+  border: 2px solid #101364 ;
+  font-weight: 600 ;
+  cursor: pointer ;
 }
 
 .btn-light {
-  background: transparent;
-  color: #fff;
+  background: transparent ;
+  color: #fff ;
 }
 
 .btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  transition: 0.3s;
+  background: rgba(255, 255, 255, 0.2) ;
+  color: #fff ;
+  transition: 0.3s ;
 }
 
 ::-webkit-scrollbar {
-  width: 7px;
+  width: 7px ;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(15, 135, 248, 0.8);
-  border-radius: 12px;
+  background: rgba(15, 135, 248, 0.8) ;
+  border-radius: 12px ;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(10, 74, 134, 0.8);
-  border-radius: 12px;
+  background: rgba(10, 74, 134, 0.8) ;
+  border-radius: 12px ;
 }
 
 .home-about-section {
-  position: relative;
-  padding-bottom: 70px;
-  padding-top: 70px;
+  position: relative ;
+  padding-bottom: 70px ;
+  padding-top: 70px ;
 }
 
 .home-about-description {
-  color: white;
-  padding-top: 100px;
-  padding-bottom: 20px;
-  text-align: center;
+  color: white ;
+  padding-top: 100px ;
+  padding-bottom: 20px ;
+  text-align: center ;
 }
 
 .home-about-body {
-  padding-top: 50px;
-  font-size: 1.2em;
-  text-align: left;
+  padding-top: 50px ;
+  font-size: 1.2em ;
+  text-align: left ;
 }
 
 .home-about-social {
-  text-align: center;
-  color: white;
+  text-align: center ;
+  color: white ;
 }
 
 .home-about-social-links {
-  justify-content: center;
-  padding-top: 15px;
-  display: inline-block;
-  position: relative;
-  padding-inline-start: 0;
+  justify-content: center ;
+  padding-top: 15px ;
+  display: inline-block ;
+  position: relative ;
+  padding-inline-start: 0 ;
 }
 
 .home-social-icons {
-  position: relative;
-  display: inline-block;
-  width: 40px;
-  height: 40px;
-  text-align: center;
-  font-size: 1.2em;
-  line-height: 3rem;
-  background: rgba(15, 135, 248, 0.9);
-  border-radius: 50%;
-  transition: 0.5s;
+  position: relative ;
+  display: inline-block ;
+  width: 40px ;
+  height: 40px ;
+  text-align: center ;
+  font-size: 1.2em ;
+  line-height: 3rem ;
+  background: rgba(15, 135, 248, 0.9) ;
+  border-radius: 50% ;
+  transition: 0.5s ;
 }
 
 .home-social-icons:hover {
-  background: rgba(255, 255, 255, 0.2); 
-  transform: scale(1.1); 
-  transition: 0.3s;
+  background: rgba(255, 255, 255, 0.2) ; 
+  transform: scale(1.1) ; 
+  transition: 0.3s ;
 }
 
 .social-icons {
-  display: inline-block;
-  padding-right: 15px;
-  padding-left: 15px;
+  display: inline-block ;
+  padding-right: 15px ;
+  padding-left: 15px ;
 }

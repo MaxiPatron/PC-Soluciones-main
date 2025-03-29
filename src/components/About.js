@@ -1,5 +1,6 @@
 import React from "react";
 import "./AboutStyle.css";
+import AboutImg from "../assets/LogoSinFondoa.png";
 const About = () => {
     return (
         <div fluid className="home-about-section" id="about">
@@ -9,13 +10,16 @@ const About = () => {
                     <div md={8} className="home-about-description">
                         <div className="left">
                             <div className="AbImg">
-                                <img className="into-Img" alt="IntroImg" />
+                                <img className="into-Img" src={AboutImg} alt="IntroImg" />
                             </div>
                         </div>
                         <div className="right">
                             <p>
-                                Me llamo Patrón Máximo, tengo 21 y actualmente terminé el cursado de la carrera de Analista de Sistemas de Computación en <a href="https://www.cervantes.edu.ar/">Institución Cervantes</a><br />
-                                En un principio cuando me interesó el mundo de la programación por el 2018 practiqué bastante Fron End, luego adentrándome más me incline hacia el Back End logrando que me interese aún más por la programación
+                                Somos VAS PC, un equipo apasionado por la tecnología💻. 🖥 Nos especializamos en servicio técnico, mantenimiento y armado de computadoras, 🛒 además de la venta de todo lo relacionado con  PCs y tecnología. <br></br>
+
+                                👨‍💻 Nacho Karam: Técnico en computadoras, especialista en mantenimiento, armado y optimización de PCs.<br></br>
+                                👨‍🔧 Maximo Patron: Especialista en hardware y tecnología. Encargado de la venta y asesoramiento de PCs, notebooks, monitores, componentes y todo lo relacionado con tecnología.<br></br>
+                                💡 Nos esforzamos por ofrecer soluciones rápidas y eficientes para que tu equipo rinda al máximo.
                             </p>
                         </div>
                     </div>
