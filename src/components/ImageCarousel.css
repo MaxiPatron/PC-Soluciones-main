@@ -1,5 +1,5 @@
 .carousel-container {
-    width: 100vw; /* Ocupará todo el ancho de la pantalla */
+    width: 100%; /* Ocupará todo el ancho de la pantalla */
     margin: 0; /* Elimina cualquier margen */
     overflow: hidden; /* Evita cualquier desbordamiento */
 }
