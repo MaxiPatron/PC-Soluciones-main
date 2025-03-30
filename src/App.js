@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./index.css";
 import Home from "./routes/Home";
+import ProductsPage from "./routes/ProductsPage";
 import Scroll from "./components/Scroll";
 import { Route, Routes } from "react-router-dom";
 import Preloader from "../src/components/PreLoader";
@@ -24,6 +25,7 @@ function App() {
         <Scroll />
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/productos" element={<ProductsPage />} />
         </Routes>
       </div>
     

@@ -51,7 +51,7 @@ ul{
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #007bff;
+  background: #cc00ff;
   border-radius: 4px;
 }
 
@@ -99,13 +99,13 @@ ul{
   text-align: center ;
   font-size: 1.2em ;
   line-height: 3rem ;
-  background: rgba(15, 135, 248, 0.9) ;
+  background: rgba(221, 15, 248, 0.9) ;
   border-radius: 50% ;
   transition: 0.5s ;
 }
 
 .home-social-icons:hover {
-  background: rgba(255, 255, 255, 0.2) ; 
+  background: rgba(111, 0, 255, 0.2) ; 
   transform: scale(1.1) ; 
   transition: 0.3s ;
 }

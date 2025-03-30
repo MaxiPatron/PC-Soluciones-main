@@ -1,0 +1,59 @@
+.categorias-container {
+    text-align: center;
+    padding: 20px;
+    color: white;
+}
+
+.categorias-container h2 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.categorias-container span {
+    color: #e100ff;
+}
+
+.carousel-wrapper {
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.categorias-slider .slick-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.categoria-item {
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    padding: 15px; /* Aumentamos el padding para dar más espacio */
+}
+
+/* Ajustamos el tamaño de las imágenes */
+.categoria-item img {
+    width: 160px;  /* Aumentar el ancho */
+    height: 160px; /* Aumentar la altura */
+    object-fit: cover;
+    border-radius: 15px; /* Ajustar la curvatura de los bordes */
+    box-shadow: 0 6px 12px rgba(174, 0, 255, 0.6); /* Sombras más intensas */
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Efecto hover para dar más dinamismo */
+.categoria-item:hover img {
+    transform: scale(1.1);
+}
+
+.categoria-item p {
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+.slick-prev, .slick-next {
+    color: white;
+    z-index: 1;
+}

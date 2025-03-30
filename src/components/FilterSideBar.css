@@ -1,0 +1,89 @@
+.filter-sidebar {
+    background-color: #f4f4f4;
+    padding: 20px;
+    width: 250px;
+    position: fixed;
+    top: 5.6rem; /* Ajustado al navbar */
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.filter-category,
+.filter-variants,
+.stock-filter {
+    margin-bottom: 30px;
+}
+
+h4 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+h5 {
+    font-size: 1rem;
+    margin: 10px 0;
+    color: #333;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+label {
+    font-size: 1rem;
+    color: #555;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+label:hover {
+    color: #007bff;
+}
+
+/* Agregar un fondo gris claro en el hover de los elementos */
+li:hover {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+/* Estilo para los filtros de categoría */
+.filter-category ul {
+    padding-left: 20px;
+}
+
+/* Estilo para los filtros de variantes */
+.filter-variants ul {
+    padding-left: 20px;
+}
+
+/* Estilo para el filtro de stock */
+.stock-filter ul {
+    padding-left: 20px;
+}
+
+/* Responsividad */
+@media screen and (max-width: 768px) {
+    .filter-sidebar {
+        width: 100%;
+        position: relative;
+        top: 0;
+    }
+
+    h4, h5, label {
+        font-size: 1rem;
+    }
+}
