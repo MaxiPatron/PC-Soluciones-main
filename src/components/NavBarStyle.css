@@ -8,34 +8,33 @@
     height: 90px;
     z-index: 10;
 }
-
 .header-bg {
     background-color: rgba(0, 0, 0, 0.9);
     transition: background-color 0.5s;
 }
-
 .navbar {
     display: flex;
     list-style: none;
 }
-
 .navbar li {
     padding: 0 1rem;
+    background-color: transparent !important
 }
-
 .navbar li a {
     font-size: 1.2rem;
     font-weight: 500;
-    color: #701a92;
+    color: #b804ff;
     text-decoration: none;
+    transition: background-color 0.3s ease;
 }
-
+.navbar li a:hover {
+    background-color: transparent;
+    color: #ff00ea;
+}
 .fabar {
     display: none;
     cursor: pointer;
 }
-
-
 @media screen and (max-width: 1040px) {
     .navbar {
         flex-direction: column;
@@ -51,20 +50,16 @@
         transition: left 0.3s;
         gap: 2rem; 
     }
-
     .navbar.active {
         left: 0;
         z-index: 5;
     }
-
     .navbar li {
         padding: 1rem 0;
     }
-
     .navbar li a {
         font-size: 2rem;
     }
-
     .fabar {
         display: block;
     }
@@ -76,19 +71,16 @@
     width: 300px;
     transition: all 0.3s ease;
 }
-
 .search-input:focus {
     outline: none;
     border-color: #8400ff;
     box-shadow: 0 0 5px rgba(162, 0, 255, 0.5);
 }
-
 .search-container {
     display: flex;
     align-items: center;
     gap: 5px;
 }
-
 .search-icon {
     background-color: #cc00ff;
     color: white;
@@ -101,7 +93,6 @@
     transition: background-color 0.3s ease;
     border: none;
 }
-
 .search-icon:hover {
     background-color: #5400b3;
 }

@@ -1,7 +1,7 @@
 .carousel-container {
-    width: 100%; /* Ocupará todo el ancho de la pantalla */
-    margin: 0; /* Elimina cualquier margen */
-    overflow: hidden; /* Evita cualquier desbordamiento */
+    width: 100%;
+    margin: 0;
+    overflow: hidden; 
 }
 
 .carousel-slide img {

@@ -4,14 +4,14 @@ import Slider from "react-slick";
 import "./CategoriasStyle.css";
 
 const categorias = [
-    { nombre: "Fuentes", imagen: "/fuente.jpeg" },
-    { nombre: "Gabinetes", imagen: "/Gabinete.png" },
+    { nombre: "Fuentes", imagen: "/Fuente.jpg" },
+    { nombre: "Gabinetes", imagen: "/Gabinete.jpg" },
     { nombre: "Tarjetas Gráficas", imagen: "/grafica.jpg" },
     { nombre: "Monitores", imagen: "/Monitor.jpg" },
     { nombre: "Motherboards", imagen: "/mother.jpg" },
     { nombre: "Notebooks", imagen: "/notebook.png" },
     { nombre: "Memorias RAM", imagen: "/ram.jpg" },
-    { nombre: "Microprocesadores", imagen: "/Ryzen7.png" },
+    { nombre: "Microprocesadores", imagen: "/Micro.jpg" },
     { nombre: "Almacenamiento", imagen: "/ssd.jpg" },
     { nombre: "Impresoras", imagen: "/impresoras.jpg" },
 ];
