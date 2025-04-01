@@ -1,15 +1,14 @@
 import React from "react";
-import Background from "../components/Profile.jsx";
+import Login from "../components/Login.jsx";
 import NavBar from "../components/NavBar.js";
 
-const Profile = () => {
+const Log = () => {
   return (
     <div>
       <NavBar isProfile={true} />
-
-      <Background />
+      <Login />
     </div>
   );
 };
 
-export default Profile;
+export default Log;

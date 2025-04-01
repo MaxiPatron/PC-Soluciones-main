@@ -6,7 +6,7 @@ import Scroll from "./components/Scroll";
 import { Route, Routes } from "react-router-dom";
 import Preloader from "../src/components/PreLoader";
 import Login from "./routes/Login";
-import Profile from "./components/Profile";
+import Profile from "./routes/Profile";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {

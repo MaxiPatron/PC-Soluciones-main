@@ -57,9 +57,10 @@ const NavBar = ({ isProfile }) => {
       <ul className={click ? "navbar active" : "navbar"}>
         <li><a href="/">Home</a></li>
         <li><Link to="/productos">Productos</Link></li>
-        <li><a href="#About">About We</a></li>
+        <li><a href="/">About We</a></li>
         {user ? (
-          <li><Link to="/profile">{user.email}</Link></li>
+          <li><Link to="/profile">{user?.user_metadata?.full_name || "Perfil"}</Link></li>
+
         ) : (
           <li><Link to="/login">Login</Link></li>
         )}

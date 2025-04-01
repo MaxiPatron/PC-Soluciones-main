@@ -1,0 +1,48 @@
+.profile-container {
+    height: 100vh; /* Asegura que ocupa toda la pantalla */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #8A2BE2, #4B0082);
+    padding: 20px; /* Evita que se corte en pantallas pequeñas */
+  }
+  
+  .profile-card {
+    width: 350px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .profile-card .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .profile-card label {
+    font-weight: bold;
+  }
+  
+  .profile-card input {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 8px;
+    border-radius: 5px;
+  }
+  
+  .profile-card input:disabled {
+    opacity: 0.7;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
