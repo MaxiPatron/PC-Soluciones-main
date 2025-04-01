@@ -15,9 +15,9 @@ const ImageCarousel = () => {
                     "https://api.unsplash.com/photos/random",
                     {
                         params: {
-                            count: 5, // Cantidad de imágenes
-                            query: "computers", // Puedes cambiar la temática
-                            client_id: "g9hgZSpWnPtE0PGTVVUHnlBq0HnvcmPfyIwWcQKi5wo", // Reemplaza con tu API Key
+                            count: 5, 
+                            query: "computers",
+                            client_id: "g9hgZSpWnPtE0PGTVVUHnlBq0HnvcmPfyIwWcQKi5wo", 
                         },
                     }
                 );

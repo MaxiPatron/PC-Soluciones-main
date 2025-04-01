@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import NavBar from '../components/NavBar';
 import FilterSidebar from '../components/FilterSidebar';
-import './ProductsPage.css';
+import '../components/ProductsPage.css';
 
 const ProductsPage = () => {
     const [products, setProducts] = useState([]);
