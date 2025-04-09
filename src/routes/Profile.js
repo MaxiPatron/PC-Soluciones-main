@@ -6,7 +6,6 @@ const Profile = () => {
   return (
     <div>
       <NavBar isProfile={true} />
-
       <Background />
     </div>
   );

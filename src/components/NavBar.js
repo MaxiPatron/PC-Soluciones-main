@@ -15,6 +15,7 @@ const NavBar = ({ isProfile }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
+
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -58,6 +59,9 @@ const NavBar = ({ isProfile }) => {
         <li><a href="/">Home</a></li>
         <li><Link to="/productos">Productos</Link></li>
         <li><a href="/">About We</a></li>
+        {user?.user_metadata?.is_admin && (
+          <li><Link to="/ProductsForm">Agregar Producto</Link></li>
+        )}
         {user ? (
           <li><Link to="/profile">{user?.user_metadata?.full_name || "Perfil"}</Link></li>
 

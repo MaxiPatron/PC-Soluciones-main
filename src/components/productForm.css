@@ -1,0 +1,8 @@
+table img {
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  form .form-label {
+    font-weight: 600;
+  }

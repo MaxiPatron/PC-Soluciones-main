@@ -8,15 +8,14 @@ import Preloader from "../src/components/PreLoader";
 import Login from "./routes/Login";
 import Profile from "./routes/Profile";
 import { AuthProvider } from "./context/AuthContext";
-
+import ProductsForm from "./routes/ProductAbm"
+import AdminRoute from "./components/AdminRoute";
 function App() {
   const [load, upadateLoad] = useState(true);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       upadateLoad(false);
     }, 1200);
-
     return () => clearTimeout(timer);
   }, []);
 
@@ -30,10 +29,17 @@ function App() {
           <Route path="/productos" element={<ProductsPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
+          <Route
+            path="/ProductsForm"
+            element={
+              <AdminRoute>
+                <ProductsForm />
+              </AdminRoute>
+            }
+          />
         </Routes>
       </AuthProvider>
     </div>
   );
 }
-
 export default App;

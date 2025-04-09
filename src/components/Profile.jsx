@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../utils/supabaseClient";
 import "./Profile.css";
+
 function Profile() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,7 +11,6 @@ function Profile() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // Cerrar sesión
   const handleLogOut = async () => {
     await supabase.auth.signOut();
     navigate("/login");
@@ -31,18 +31,33 @@ function Profile() {
     getUserData();
   }, [navigate]);
 
-  const handleSaveChanges = async () => {
-    let updateData = { full_name: fullName, phone: phone };
-    if (password) {
-      updateData.password = password;
-    }
+  const handleSaveProfile = async () => {
+    const { error } = await supabase.auth.updateUser({
+      data: { full_name: fullName, phone: phone },
+    });
 
-    const { error } = await supabase.auth.updateUser(updateData);
     if (!error) {
       alert("Perfil actualizado correctamente");
-      setPassword("");
     } else {
       alert("Error al actualizar el perfil");
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (!password) {
+      alert("Ingrese una nueva contraseña");
+      return;
+    }
+
+    const { error } = await supabase.auth.updateUser({
+      password: password,
+    });
+
+    if (!error) {
+      alert("Contraseña actualizada correctamente");
+      setPassword("");
+    } else {
+      alert("Error al actualizar la contraseña");
     }
   };
 
@@ -70,10 +85,11 @@ function Profile() {
               <label>Nueva Contraseña:</label>
               <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
-            <div className="d-flex justify-content-between">
-              <button onClick={handleSaveChanges} className="btn btn-primary">Guardar Cambios</button>
-              <button onClick={handleLogOut} className="btn btn-primary">Cerrar Sesión</button>
+            <div className="d-flex justify-content-between mb-2">
+              <button onClick={handleSaveProfile} className="btn btn-primary">Guardar Perfil</button>
+              <button onClick={handleChangePassword} className="btn btn-primary">Cambiar Contraseña</button>
             </div>
+            <button onClick={handleLogOut} className="btn btn-primary">Cerrar Sesión</button>
           </>
         )}
       </div>
