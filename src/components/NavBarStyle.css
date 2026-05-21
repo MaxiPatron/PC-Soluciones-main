@@ -27,16 +27,21 @@
     text-decoration: none;
     transition: background-color 0.3s ease;
 }
-.navbar li a:hover {
-    background-color: transparent;
-    color: #ff00ea;
+.navbar li a:hover,
+.nav-logout:hover {
+  color: white;
+  text-shadow: 0 0 12px #d000ff;
 }
 .nav-logout {
-  background: transparent;
-  border: none;
   color: #d000ff;
+  font-family: inherit;
+  font-size: 1rem;
   font-weight: 700;
+  text-decoration: none;
+  background: none;
+  border: none;
   cursor: pointer;
+  transition: 0.3s ease;
 }
 .fabar {
     display: none;
@@ -84,22 +89,79 @@
     box-shadow: 0 0 5px rgba(162, 0, 255, 0.5);
 }
 .search-container {
-    display: flex;
-    align-items: center;
-    gap: 5px;
+  width: 100%;
+  max-width: 620px;
+
+  display: flex;
+  align-items: center;
+
+  background: rgba(15, 15, 15, 0.95);
+
+  border: 2px solid #8400ff;
+
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  height: 50px;
+
+  box-shadow:
+    0 0 15px rgba(98, 0, 255, 0.15);
 }
+
+.search-input {
+  flex: 1;
+
+  background: transparent !important;
+  border: none !important;
+
+  color: white !important;
+
+  padding: 0 18px;
+
+  font-size: 0.95rem;
+
+  box-shadow: none !important;
+}
+
+.search-input::placeholder {
+  color: #8a8a8a;
+}
+
 .search-icon {
-    background-color: #cc00ff;
-    color: white;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px;
-    transition: background-color 0.3s ease;
-    border: none;
+  width: 55px;
+  height: 100%;
+
+  border: none;
+
+  background: linear-gradient(
+    135deg,
+    #bb00ff,
+    #7b2cff
+  );
+
+  color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: 0.3s;
 }
+
 .search-icon:hover {
-    background-color: #5400b3;
+  filter: brightness(1.15);
+}
+.search-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  margin: 0 35px;
+}
+
+.search-container {
+  max-width: 520px;
+  height: 44px;
 }

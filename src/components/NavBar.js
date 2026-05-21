@@ -2,7 +2,7 @@ import "./NavBarStyle.css";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
-import { Form, FormControl, Container, Row, Col } from "react-bootstrap";
+import { Form, FormControl } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../utils/supabaseClient";
 import useIsAdmin from "../utils/useIsAdmin";
@@ -34,24 +34,20 @@ const NavBar = ({ isProfile }) => {
       </Link>
 
       {!isProfile && (
-        <Container className="d-flex justify-content-center mt-3">
-          <Row>
-            <Col>
-              <Form className="search-container" onSubmit={handleSearchSubmit}>
-                <FormControl
-                  type="text"
-                  placeholder="Buscar productos, marcas y más..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="search-input"
-                />
-                <button className="search-icon" type="submit">
-                  <FaSearch />
-                </button>
-              </Form>
-            </Col>
-          </Row>
-        </Container>
+        <div className="search-wrapper">
+          <Form className="search-container" onSubmit={handleSearchSubmit}>
+            <FormControl
+              type="text"
+              placeholder="Buscar productos, marcas y más..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+            <button className="search-icon" type="submit">
+              <FaSearch />
+            </button>
+          </Form>
+        </div>
       )}
 
       <div className="fabar" onClick={() => setClick(!click)}>
