@@ -16,13 +16,11 @@ export default function useIsAdmin() {
       if (user) {
         const { data, error } = await supabase
           .from("profiles")
-          .select("is_admin")
+          .select("role")
           .eq("id", user.id)
           .single();
 
-        console.log("📋 Resultado query profiles:", data, error);
-
-        if (!error && data?.is_admin) {
+        if (!error && data?.role === "admin") {
           setIsAdmin(true);
         }
       }

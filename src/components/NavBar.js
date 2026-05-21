@@ -4,21 +4,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
 import { Form, FormControl, Container, Row, Col } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
+import { supabase } from "../utils/supabaseClient";
+import useIsAdmin from "../utils/useIsAdmin";
 
 const NavBar = ({ isProfile }) => {
   const [click, setClick] = useState(false);
-  const handleClick = () => setClick(!click);
-  const [color, setColor] = useState(false);
-  const changeColor = () => { if (window.scrollY >= 100) { setColor(true); } else { setColor(false) }; };
-  window.addEventListener("scroll", changeColor);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+
   const { user } = useAuth();
-
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  const { isAdmin } = useIsAdmin();
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -27,11 +22,17 @@ const NavBar = ({ isProfile }) => {
     }
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/login");
+  };
+
   return (
-    <div className={color ? "header header-bg" : "header"}>
+    <div className="header">
       <Link to="/">
         <h1>PC Soluciones</h1>
       </Link>
+
       {!isProfile && (
         <Container className="d-flex justify-content-center mt-3">
           <Row>
@@ -41,7 +42,7 @@ const NavBar = ({ isProfile }) => {
                   type="text"
                   placeholder="Buscar productos, marcas y más..."
                   value={searchTerm}
-                  onChange={handleSearchChange}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="search-input"
                 />
                 <button className="search-icon" type="submit">
@@ -52,19 +53,29 @@ const NavBar = ({ isProfile }) => {
           </Row>
         </Container>
       )}
-      <div className="fabar" onClick={handleClick}>
-        {click ? (<FaTimes size={20} style={{ color: "#fff" }} />) : (<FaBars size={20} style={{ color: "#fff" }} />)}
-      </div>
-      <ul className={click ? "navbar active" : "navbar"}>
-        <li><a href="/">Home</a></li>
-        <li><Link to="/productos">Productos</Link></li>
-        <li><a href="/">About We</a></li>
-        {user?.user_metadata?.is_admin && (
-          <li><Link to="/ProductsForm">Agregar Producto</Link></li>
-        )}
-        {user ? (
-          <li><Link to="/profile">{user?.user_metadata?.full_name || "Perfil"}</Link></li>
 
+      <div className="fabar" onClick={() => setClick(!click)}>
+        {click ? <FaTimes size={20} color="#fff" /> : <FaBars size={20} color="#fff" />}
+      </div>
+
+      <ul className={click ? "navbar active" : "navbar"}>
+        <li><Link to="/">Home</Link></li>
+        <li><Link to="/productos">Productos</Link></li>
+        <li><Link to="/">About We</Link></li>
+
+        {isAdmin && (
+          <li><Link to="/ProductsForm">Admin</Link></li>
+        )}
+
+        {user ? (
+          <>
+            <li><Link to="/profile">Perfil</Link></li>
+            <li>
+              <button onClick={handleLogout} className="nav-logout">
+                Salir
+              </button>
+            </li>
+          </>
         ) : (
           <li><Link to="/login">Login</Link></li>
         )}

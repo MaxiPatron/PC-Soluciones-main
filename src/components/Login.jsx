@@ -10,35 +10,46 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleAuth = async (e) => {
-    e.preventDefault();
-    setError("");
+const handleAuth = async (e) => {
+  e.preventDefault();
+  setError("");
 
-    try {
-      let response;
-      if (isRegister) {
-        response = await supabase.auth.signUp({ email, password });
-      } else {
-        response = await supabase.auth.signInWithPassword({ email, password });
+  try {
+    if (isRegister) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      const user = data.user;
+
+      if (user) {
+        await supabase.from("profiles").insert({
+          id: user.id,
+          full_name: email.split("@")[0],
+          role: "user",
+        });
       }
 
-      if (response.error) throw response.error;
-
-      if (isRegister) {
-        alert("¡Registro exitoso! Revisa tu correo para confirmar la cuenta.");
-      }
-
-      navigate("/profile");
-    } catch (err) {
-      if (err.status === 422) {
-        setError("El formato del correo o la contraseña no es válido.");
-      } else if (err.status === 400) {
-        setError("El usuario ya está registrado o la contraseña es incorrecta.");
-      } else {
-        setError("Error al autenticar: " + err.message);
-      }
+      alert("Registro exitoso. Ahora podés iniciar sesión.");
+      setIsRegister(false);
+      return;
     }
-  };
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) throw error;
+
+    navigate("/profile");
+  } catch (err) {
+    setError("Error al autenticar: " + err.message);
+  }
+};
 
   useEffect(() => {
     const checkUser = async () => {

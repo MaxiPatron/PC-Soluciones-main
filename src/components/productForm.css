@@ -1,8 +1,110 @@
-table img {
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  form .form-label {
-    font-weight: 600;
-  }
+.container {
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+  padding: 30px;
+  background: rgba(18, 18, 18, 0.95);
+  border-radius: 20px;
+  border: 1px solid #2f2f2f;
+  box-shadow: 0 0 30px rgba(162, 0, 255, 0.15);
+  color: white;
+  margin-bottom: 40px;
+}
+.admin-page {
+  padding-top: 120px;
+  padding-bottom: 60px;
+}
+
+.container h2,
+.container h3,
+.container h4 {
+  color: white;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #d4d4d4;
+}
+
+.form-control {
+  width: 100%;
+  background: #0f0f0f;
+  border: 1px solid #333;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #b000ff;
+  box-shadow: 0 0 10px rgba(176, 0, 255, 0.3);
+}
+
+.btn-primary,
+.btn-success {
+  background: linear-gradient(135deg, #8400ff, #d000ff);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-primary:hover,
+.btn-success:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 25px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #2e2e2e;
+  padding: 12px;
+  text-align: left;
+}
+
+.table th {
+  background: #151515;
+}
+
+.table td {
+  background: #0d0d0d;
+}
+
+.table img {
+  border-radius: 8px;
+}
+
+hr {
+  border: 1px solid #2f2f2f;
+  margin: 40px 0;
+}
+
+.user-roles-container {
+  margin-bottom: 60px;
+}
+
+.user-roles-container table {
+  margin-top: 20px;
+}
+
+.user-roles-container th {
+  color: #c000ff;
+}
+
+.user-roles-container td {
+  color: white;
+}

@@ -15,7 +15,9 @@ export function AuthProvider({ children }) {
     const getUser = async () => {
       try {
         const { data: { user }, error } = await supabase.auth.getUser();
-        if (error) throw error;
+        if (error && error.message !== "Auth session missing!") {
+          throw error;
+        }
         setUser(user);
       } catch (error) {
         console.error("Error fetching user:", error.message);
