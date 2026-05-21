@@ -6,6 +6,7 @@ import ImageCarousel from '../components/ImageCarousel'
 import Categorias from '../components/categorias'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../utils/supabaseClient'
+import FeaturedBrands from "../components/FeaturedBrands";
 const Home = () => {
   const navigate = useNavigate()
 
@@ -20,6 +21,7 @@ const Home = () => {
       <NavBar />
       <ImageCarousel />
       <Categorias />
+      <FeaturedBrands />
       <About />
       <Footer />
     </div>

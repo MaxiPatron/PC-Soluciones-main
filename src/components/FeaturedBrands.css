@@ -1,0 +1,141 @@
+.featured-brands {
+  background: #050505;
+  color: white;
+  padding: 90px 7%;
+}
+
+.featured-header {
+  margin-bottom: 30px;
+}
+
+.featured-header span {
+  color: #d000ff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.featured-header h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  margin-top: 10px;
+}
+
+.featured-header strong {
+  color: #d000ff;
+}
+
+.brand-tabs {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.brand-tabs button {
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(208, 0, 255, 0.45);
+  background: transparent;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.brand-tabs button.active,
+.brand-tabs button:hover {
+  background: linear-gradient(135deg, #8a00ff, #d000ff);
+  box-shadow: 0 0 20px rgba(208, 0, 255, 0.35);
+}
+
+.brand-showcase {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(3, 1fr);
+  gap: 22px;
+}
+
+.brand-banner,
+.brand-product-card {
+  min-height: 330px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+  overflow: hidden;
+  background: #111;
+  box-shadow: 0 0 25px rgba(208, 0, 255, 0.08);
+}
+
+.brand-banner {
+  display: flex;
+  align-items: flex-end;
+  padding: 28px;
+  background:
+    linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.25)),
+    url("../../public/Gabinete.jpg") center/cover;
+}
+
+.brand-banner span {
+  color: #d000ff;
+  font-weight: 800;
+}
+
+.brand-banner h3 {
+  font-size: 2.5rem;
+  margin: 8px 0;
+}
+
+.brand-banner p {
+  color: #cfcfcf;
+}
+
+.brand-product-card {
+  padding: 22px;
+  transition: 0.3s ease;
+}
+
+.brand-product-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(208, 0, 255, 0.5);
+}
+
+.brand-product-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  margin-bottom: 18px;
+}
+
+.brand-product-card h4 {
+  min-height: 58px;
+  font-size: 1rem;
+  color: white;
+}
+
+.brand-product-card p {
+  color: #d000ff;
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.brand-product-card button {
+  margin-top: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 11px;
+  background: linear-gradient(135deg, #8a00ff, #d000ff);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+  .brand-showcase {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 650px) {
+  .brand-showcase {
+    grid-template-columns: 1fr;
+  }
+}
