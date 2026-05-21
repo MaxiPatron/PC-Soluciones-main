@@ -18,7 +18,7 @@ function App() {
     }, 1200);
     return () => clearTimeout(timer);
   }, []);
-
+//asd
   return (
     <div className="App" id={load ? "no-scroll" : "scroll"}>
       <AuthProvider>
