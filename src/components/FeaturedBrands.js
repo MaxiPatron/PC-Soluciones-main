@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./FeaturedBrands.css";
-
+import { Link } from "react-router-dom";
 const brands = ["Corsair", "AMD", "Intel", "Kingston", "NVIDIA"];
 
 const products = {
@@ -67,9 +67,17 @@ const FeaturedBrands = () => {
         {products[selectedBrand].map((product, index) => (
           <article className="brand-product-card" key={index}>
             <img src={product.image} alt={product.name} />
+
             <h4>{product.name}</h4>
+
             <p>{product.price}</p>
-            <button>Ver producto</button>
+
+            <Link
+              to={`/productos?brand=${selectedBrand}`}
+              className="brand-product-btn"
+            >
+              Ver producto
+            </Link>
           </article>
         ))}
       </div>

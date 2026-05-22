@@ -4,7 +4,7 @@ import { supabase } from "../utils/supabaseClient";
 import NavBar from "../components/NavBar";
 import FilterSidebar from "../components/FilterSidebar";
 import "../components/ProductsPage.css";
-
+import { Link } from "react-router-dom";
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
@@ -153,16 +153,27 @@ const ProductsPage = () => {
                         </span>
                       </div>
 
-                      <a
-                        className="product-btn"
-                        href={`https://wa.me/5493513256553?text=${encodeURIComponent(
-                          `Hola! Quiero consultar por este producto: ${product.name}`
-                        )}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Consultar
-                      </a>
+                      <div className="product-actions">
+
+                        <Link
+                          to={`/producto/${product.slug}`}
+                          className="product-btn secondary"
+                        >
+                          Ver producto
+                        </Link>
+
+                        <a
+                          className="product-btn"
+                          href={`https://wa.me/5493513256553?text=${encodeURIComponent(
+                            `Hola! Quiero consultar por este producto: ${product.name}`
+                          )}`}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Consultar
+                        </a>
+
+                      </div>
                     </div>
                   </article>
                 ))}

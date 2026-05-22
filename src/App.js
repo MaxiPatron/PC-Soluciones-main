@@ -11,6 +11,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ProductsForm from "./routes/ProductAbm"
 import AdminRoute from "./components/AdminRoute";
 import UpdatePassword from "./routes/UpdatePassword";
+import ProductDetail from "./routes/ProductDetail";
 function App() {
   const [load, upadateLoad] = useState(true);
   useEffect(() => {
@@ -39,6 +40,7 @@ function App() {
             }
           />
           <Route path="/update-password" element={<UpdatePassword />} />
+          <Route path="/producto/:slug" element={<ProductDetail />} />
         </Routes>
       </AuthProvider>
     </div>
