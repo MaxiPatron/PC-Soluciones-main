@@ -13,7 +13,9 @@ const Footer = forwardRef((props, ref) => {
                         <p id="footer">Argentina, Córdoba</p>
                     </div>
                     <div className="Email">
-                        <h4><FaMailBulk size={20} style={{ color: "#fff", marginRight: "2rem" }} />pcfixvas@gmail.com</h4>
+                        <h4><FaMailBulk size={20} style={{ color: "#fff", marginRight: "2rem" }} /><a href="mailto:pcsolucionesvas@gmail.com">
+  pcsolucionesvas@gmail.com
+</a></h4>
                     </div>
                 </div>
                 <div>

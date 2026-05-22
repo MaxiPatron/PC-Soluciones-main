@@ -75,7 +75,7 @@ const ImageCarousel = () => {
           </Link>
 
           <a
-            href="https://wa.me/5493510000000"
+            href="https://wa.me/5493513256553"
             target="_blank"
             rel="noreferrer"
             className="hero-btn secondary"
