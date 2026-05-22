@@ -5,10 +5,16 @@ import "./Profile.css";
 
 function Profile() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [fullName, setFullName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [profile, setProfile] = useState({
+    full_name: "",
+    phone: "",
+    city: "",
+    province: "",
+    role: "user",
+  });
+
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const handleLogOut = async () => {
@@ -18,29 +24,82 @@ function Profile() {
 
   useEffect(() => {
     const getUserData = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
       if (error || !user) {
         navigate("/login");
-      } else {
-        setUser(user);
-        setFullName(user.user_metadata?.full_name || "");
-        setPhone(user.user_metadata?.phone || "");
-        setLoading(false);
+        return;
       }
+
+      setUser(user);
+
+      const { data: profileData } = await supabase
+        .from("profiles")
+        .select("full_name, phone, city, province, role")
+        .eq("id", user.id)
+        .single();
+
+      setProfile({
+        full_name:
+          profileData?.full_name ||
+          user.user_metadata?.full_name ||
+          "",
+        phone:
+          profileData?.phone ||
+          user.user_metadata?.phone ||
+          "",
+        city:
+          profileData?.city ||
+          user.user_metadata?.city ||
+          "",
+        province:
+          profileData?.province ||
+          user.user_metadata?.province ||
+          "",
+        role: profileData?.role || "user",
+      });
+
+      setLoading(false);
     };
+
     getUserData();
   }, [navigate]);
 
+  const handleChange = (e) => {
+    setProfile({
+      ...profile,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   const handleSaveProfile = async () => {
-    const { error } = await supabase.auth.updateUser({
-      data: { full_name: fullName, phone: phone },
+    const { error: metadataError } = await supabase.auth.updateUser({
+      data: {
+        full_name: profile.full_name,
+        phone: profile.phone,
+        city: profile.city,
+        province: profile.province,
+      },
     });
 
-    if (!error) {
-      alert("Perfil actualizado correctamente");
-    } else {
+    const { error: profileError } = await supabase.from("profiles").upsert({
+      id: user.id,
+      full_name: profile.full_name,
+      phone: profile.phone,
+      city: profile.city,
+      province: profile.province,
+      role: profile.role || "user",
+    });
+
+    if (metadataError || profileError) {
       alert("Error al actualizar el perfil");
+      return;
     }
+
+    alert("Perfil actualizado correctamente");
   };
 
   const handleChangePassword = async () => {
@@ -49,51 +108,142 @@ function Profile() {
       return;
     }
 
+    if (password.length < 6) {
+      alert("La contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+
     const { error } = await supabase.auth.updateUser({
-      password: password,
+      password,
     });
 
-    if (!error) {
-      alert("Contraseña actualizada correctamente");
-      setPassword("");
-    } else {
+    if (error) {
       alert("Error al actualizar la contraseña");
+      return;
     }
+
+    alert("Contraseña actualizada correctamente");
+    setPassword("");
   };
 
-  if (loading) return <div className="text-center mt-5 text-white">Cargando...</div>;
+  if (loading) {
+    return (
+      <div className="profile-page">
+        <p className="profile-loading">Cargando perfil...</p>
+      </div>
+    );
+  }
+
+  const initials =
+    profile.full_name
+      ?.split(" ")
+      .map((word) => word[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "U";
 
   return (
-    <div className="profile-container d-flex justify-content-center align-items-center vh-100">
-      <div className="profile-card p-4 text-center">
-        <h3 className="text-center mb-4">Perfil de Usuario</h3>
-        {user && (
-          <>
-            <div className="form-group mb-3">
-              <label>Nombre:</label>
-              <input type="text" className="form-control" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+    <main className="profile-page">
+      <section className="profile-wrapper">
+        <div className="profile-header">
+          <span>MI CUENTA</span>
+          <h1>Perfil de usuario</h1>
+          <p>Gestioná tus datos personales y la seguridad de tu cuenta.</p>
+        </div>
+
+        <div className="profile-grid">
+          <aside className="profile-summary">
+            <div className="profile-avatar">{initials}</div>
+
+            <h2>{profile.full_name || "Usuario"}</h2>
+            <p>{user.email}</p>
+
+            <span className="profile-role">
+              {profile.role === "admin" ? "Administrador" : "Cliente"}
+            </span>
+
+            <button onClick={handleLogOut} className="profile-logout">
+              Cerrar sesión
+            </button>
+          </aside>
+
+          <section className="profile-panel">
+            <h3>Datos personales</h3>
+
+            <div className="profile-form">
+              <div className="profile-field">
+                <label>Nombre y apellido</label>
+                <input
+                  type="text"
+                  name="full_name"
+                  value={profile.full_name}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="profile-field">
+                <label>Correo electrónico</label>
+                <input type="email" value={user.email} disabled />
+              </div>
+
+              <div className="profile-field">
+                <label>Teléfono</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={profile.phone}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="profile-row">
+                <div className="profile-field">
+                  <label>Ciudad</label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={profile.city}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="profile-field">
+                  <label>Provincia</label>
+                  <input
+                    type="text"
+                    name="province"
+                    value={profile.province}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <button onClick={handleSaveProfile} className="profile-main-btn">
+                Guardar cambios
+              </button>
             </div>
-            <div className="form-group mb-3">
-              <label>Correo Electrónico:</label>
-              <input type="email" className="form-control" value={user.email} disabled />
+
+            <div className="profile-security">
+              <h3>Seguridad</h3>
+
+              <div className="profile-field">
+                <label>Nueva contraseña</label>
+                <input
+                  type="password"
+                  value={password}
+                  placeholder="********"
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+
+              <button onClick={handleChangePassword} className="profile-secondary-btn">
+                Cambiar contraseña
+              </button>
             </div>
-            <div className="form-group mb-3">
-              <label>Teléfono:</label>
-              <input type="tel" className="form-control" value={phone} onChange={(e) => setPhone(e.target.value)} />
-            </div>
-            <div className="form-group mb-3">
-              <label>Nueva Contraseña:</label>
-              <input type="password" className="form-control" value={password} onChange={(e) => setPassword(e.target.value)} />
-            </div>
-            <div className="d-flex justify-content-between mb-2">
-              <button onClick={handleSaveProfile} className="btn btn-primary">Guardar Perfil</button>
-              <button onClick={handleChangePassword} className="btn btn-primary">Cambiar Contraseña</button>
-            </div>
-            <button onClick={handleLogOut} className="btn btn-primary">Cerrar Sesión</button>
-          </>
-        )}
-      </div>
-    </div>
+          </section>
+        </div>
+      </section>
+    </main>
   );
 }
 
