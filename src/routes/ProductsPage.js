@@ -153,9 +153,16 @@ const ProductsPage = () => {
                         </span>
                       </div>
 
-                      <button className="product-btn">
+                      <a
+                        className="product-btn"
+                        href={`https://wa.me/5493513256553?text=${encodeURIComponent(
+                          `Hola! Quiero consultar por este producto: ${product.name}`
+                        )}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
                         Consultar
-                      </button>
+                      </a>
                     </div>
                   </article>
                 ))}

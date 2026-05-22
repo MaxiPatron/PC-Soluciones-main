@@ -1,59 +1,182 @@
 .login-background {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(135deg, #9012c2, #650e80, #1e0238);
+  min-height: 100vh;
+  padding: 120px 6% 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(208, 0, 255, 0.35), transparent 35%),
+    linear-gradient(135deg, #050505, #220033, #050505);
+}
+
+.login-card {
+  width: min(980px, 100%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: rgba(15, 15, 15, 0.88);
+  border: 1px solid rgba(208, 0, 255, 0.25);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 0 45px rgba(208, 0, 255, 0.18);
+  overflow: hidden;
+  position: relative;
+}
+.login-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(208,0,255,.5),
+    transparent,
+    rgba(208,0,255,.2)
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.login-info {
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background:
+    linear-gradient(to top,
+      rgba(0, 0, 0, 0.95),
+      rgba(0, 0, 0, 0.55)),
+    url("../../public/brands/hardwaregen.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.login-info h1 {
+  color: white;
+  font-size: 3rem;
+  margin: 14px 0;
+  line-height: 1.1;
+}
+
+.login-info span {
+  color: #d000ff;
+  font-size: .8rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.login-info p {
+  color: rgba(255, 255, 255, .85);
+  line-height: 1.7;
+}
+
+.login-form {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: white;
+}
+
+.login-form h2 {
+  font-size: 2rem;
+}
+
+.form-group {
+  margin: 10px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 12px;
+  border: 1px solid #2d2d2d;
+  background: #111;
+  color: white;
+  outline: none;
+}
+
+.login-input:focus {
+  border-color: #d000ff;
+  box-shadow: 0 0 14px rgba(208, 0, 255, 0.28);
+}
+
+.password-field {
+  display: flex;
+  gap: 10px;
+}
+
+.password-field input {
+  flex: 1;
+}
+
+.password-field button,
+.forgot-button,
+.toggle-button {
+  background: none;
+  border: none;
+  color: #d000ff;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.password-field button {
+  padding: 0 10px;
+}
+
+.forgot-button {
+  align-self: flex-end;
+}
+
+.login-button {
+  margin-top: 8px;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #8a00ff, #d000ff);
+  color: white;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 0 22px rgba(208, 0, 255, 0.28);
+}
+
+.toggle-button {
+  text-decoration: underline;
+}
+
+.error-message {
+  color: #ff5c5c;
+}
+
+.success-message {
+  color: #00ff9d;
+}
+
+@media (max-width: 850px) {
+  .login-card {
+    grid-template-columns: 1fr;
   }
-  
-  .login-container {
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 2rem;
-    border-radius: 8px;
-    backdrop-filter: blur(8px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+
+  .login-info {
+    min-height: 260px;
   }
-  
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    color: #fff;
+
+  .form-row {
+    grid-template-columns: 1fr;
   }
-  
-  .login-input {
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: none;
-    margin: 0.5rem 0;
-  }
-  
-  .login-button {
-    padding: 0.5rem;
-    border-radius: 4px;
-    border: none;
-    background-color: #1c8ef5;
-    color: #fff;
-    cursor: pointer;
-  }
-  
-  .login-button:hover {
-    background-color: #7c158a;
-  }
-  
-  .toggle-button {
-    background: none;
-    border: none;
-    color: #d11cf5;
-    text-decoration: underline;
-    cursor: pointer;
-  }
-  
-  .toggle-button:hover {
-    color: #155a8a;
-  }
-  
-  .error-message {
-    color: #ff4d4d;
-  }
-  
+}
