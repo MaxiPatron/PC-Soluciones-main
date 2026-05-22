@@ -108,3 +108,33 @@ hr {
 .user-roles-container td {
   color: white;
 }
+
+.admin-table-filters {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.admin-table-filters input,
+.admin-table-filters select {
+  background: #111;
+  border: 1px solid #333;
+  color: white;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.table-responsive {
+  max-height: 650px;
+  overflow-y: auto;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.table td {
+  font-size: 0.9rem;
+}

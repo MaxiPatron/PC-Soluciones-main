@@ -15,7 +15,10 @@ const ProductForm = () => {
     active: true,
     featured: false,
   });
-
+  const [search, setSearch] = useState("");
+  const [brandFilter, setBrandFilter] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [sortPrice, setSortPrice] = useState("");
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [editingId, setEditingId] = useState(null);
@@ -120,22 +123,41 @@ const ProductForm = () => {
     setEditingId(null);
     fetchProducts();
   };
-  
+
   const handleDelete = async (id) => {
-  const confirmDelete = window.confirm("¿Seguro que querés eliminar este producto?");
+    const confirmDelete = window.confirm("¿Seguro que querés eliminar este producto?");
 
-  if (!confirmDelete) return;
+    if (!confirmDelete) return;
 
-  const { error } = await supabase.from("products").delete().eq("id", id);
+    const { error } = await supabase.from("products").delete().eq("id", id);
 
-  if (error) {
-    console.error(error);
-    alert("Error al eliminar producto");
-    return;
-  }
+    if (error) {
+      console.error(error);
+      alert("Error al eliminar producto");
+      return;
+    }
 
-  fetchProducts();
-};
+    fetchProducts();
+  };
+
+  const filteredAdminProducts = products
+    .filter((prod) =>
+      prod.name?.toLowerCase().includes(search.toLowerCase()) ||
+      prod.sku?.toLowerCase().includes(search.toLowerCase())
+    )
+    .filter((prod) =>
+      brandFilter ? prod.brand === brandFilter : true
+    )
+    .filter((prod) =>
+      categoryFilter ? String(prod.category_id) === categoryFilter : true
+    )
+    .sort((a, b) => {
+      if (sortPrice === "asc") return Number(a.price) - Number(b.price);
+      if (sortPrice === "desc") return Number(b.price) - Number(a.price);
+      return 0;
+    });
+
+  const brands = [...new Set(products.map((p) => p.brand).filter(Boolean))];
 
   return (
     <div className="container mt-5">
@@ -274,12 +296,40 @@ const ProductForm = () => {
       <hr className="my-5" />
 
       <h3>Productos Cargados</h3>
+      <div className="admin-table-filters">
+        <input
+          type="text"
+          placeholder="Buscar por nombre o SKU..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
 
+        <select value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)}>
+          <option value="">Todas las marcas</option>
+          {brands.map((brand) => (
+            <option key={brand} value={brand}>{brand}</option>
+          ))}
+        </select>
+
+        <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+          <option value="">Todas las categorías</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>{cat.name}</option>
+          ))}
+        </select>
+
+        <select value={sortPrice} onChange={(e) => setSortPrice(e.target.value)}>
+          <option value="">Ordenar precio</option>
+          <option value="asc">Menor a mayor</option>
+          <option value="desc">Mayor a menor</option>
+        </select>
+      </div>
       <div className="table-responsive">
         <table className="table table-dark table-striped mt-3">
           <thead>
             <tr>
               <th>Nombre</th>
+              <th>SKU</th>
               <th>Marca</th>
               <th>Precio</th>
               <th>Stock</th>
@@ -290,9 +340,10 @@ const ProductForm = () => {
           </thead>
 
           <tbody>
-            {products.map((prod) => (
+            {filteredAdminProducts.map((prod) => (
               <tr key={prod.id}>
                 <td>{prod.name}</td>
+                <td>{prod.sku || "Sin SKU"}</td>
                 <td>{prod.brand}</td>
                 <td>${prod.price}</td>
                 <td>{prod.stock}</td>
