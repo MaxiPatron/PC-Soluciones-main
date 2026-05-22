@@ -57,7 +57,7 @@ const NavBar = ({ isProfile }) => {
       <ul className={click ? "navbar active" : "navbar"}>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/productos">Productos</Link></li>
-        <li><Link to="/">About We</Link></li>
+        <li><a href="#about">About We</a></li>
 
         {isAdmin && (
           <li><Link to="/ProductsForm">Admin</Link></li>

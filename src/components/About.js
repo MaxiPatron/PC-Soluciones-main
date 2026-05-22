@@ -15,11 +15,16 @@ const About = () => {
                         </div>
                         <div className="right">
                             <p>
-                                Somos VAS PC, un equipo apasionado por la tecnología💻. 🖥 Nos especializamos en servicio técnico, mantenimiento y armado de computadoras, 🛒 además de la venta de todo lo relacionado con  PCs y tecnología. <br></br>
+                                En PC Soluciones nos especializamos en la venta de componentes, notebooks,
+                                periféricos y accesorios para setups de trabajo, gaming y uso profesional.
+                                <br /><br />
 
-                                👨‍💻 Nacho Karam: Técnico en computadoras, especialista en mantenimiento, armado y optimización de PCs.<br></br>
-                                👨‍🔧 Maximo Patron: Especialista en hardware y tecnología. Encargado de la venta y asesoramiento de PCs, notebooks, monitores, componentes y todo lo relacionado con tecnología.<br></br>
-                                💡 Nos esforzamos por ofrecer soluciones rápidas y eficientes para que tu equipo rinda al máximo.
+                                Brindamos asesoramiento personalizado para ayudarte a elegir el hardware
+                                adecuado según tu presupuesto, necesidad y tipo de uso.
+                                <br /><br />
+
+                                También ofrecemos soluciones vinculadas al armado, mantenimiento y mejora de
+                                equipos, buscando siempre rendimiento, confianza y atención cercana.
                             </p>
                         </div>
                     </div>

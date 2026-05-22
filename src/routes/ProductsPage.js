@@ -99,35 +99,63 @@ const ProductsPage = () => {
     <div>
       <NavBar />
 
-      <div className="products-page">
-        <FilterSidebar onFilterChange={handleFilterChange} />
+      <main className="products-page">
+        <section className="products-hero">
+          <span>CATÁLOGO</span>
+          <h1>Productos disponibles</h1>
+          <p>Componentes, periféricos y hardware seleccionado.</p>
+        </section>
 
-        <div className="products-container">
-          <h2>Todos los Productos</h2>
+        <section className="products-layout">
+          <FilterSidebar onFilterChange={handleFilterChange} />
 
-          {loading ? (
-            <p>Cargando productos...</p>
-          ) : (
-            <div className="product-list">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
-                  <div key={product.id} className="product-card">
-                    <img src={product.image_url} alt={product.name} />
-                    <h3>{product.name}</h3>
-                    <p className="product-brand">{product.brand}</p>
-                    <p>${product.price}</p>
-                    <span>
-                      {product.stock > 0 ? "En stock" : "Agotado"}
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <p>No se encontraron productos</p>
-              )}
+          <div className="products-content">
+            <div className="products-topbar">
+              <h2>{filteredProducts.length} productos encontrados</h2>
             </div>
-          )}
-        </div>
-      </div>
+
+            {loading ? (
+              <p className="products-message">Cargando productos...</p>
+            ) : filteredProducts.length > 0 ? (
+              <div className="product-grid">
+                {filteredProducts.map((product) => (
+                  <article key={product.id} className="product-card">
+                    <div className="product-image">
+                      <img
+                        src={product.image_url || "/placeholder-product.png"}
+                        alt={product.name}
+                      />
+                    </div>
+
+                    <div className="product-info">
+                      <span className="product-brand">{product.brand}</span>
+                      <h3>{product.name}</h3>
+
+                      <div className="product-bottom">
+                        <p className="product-price">
+                          {Number(product.price) > 0
+                            ? `$${Number(product.price).toLocaleString("es-AR")}`
+                            : "Consultar precio"}
+                        </p>
+
+                        <span className={product.stock > 0 ? "stock ok" : "stock no"}>
+                          {product.stock > 0 ? "En stock" : "Agotado"}
+                        </span>
+                      </div>
+
+                      <button className="product-btn">
+                        Consultar
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="products-message">No se encontraron productos</p>
+            )}
+          </div>
+        </section>
+      </main>
     </div>
   );
 };

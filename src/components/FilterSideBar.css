@@ -1,90 +1,51 @@
 .filter-sidebar {
-    background-color: #f4f4f4;
-    padding: 20px;
-    width: 250px;
-    position: fixed;
-    top: 5.6rem; /* Ajustado al navbar */
-    left: 0;
-    bottom: 0;
-    overflow-y: auto;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    z-index: 10;
+  background: #111;
+  border: 1px solid #252525;
+  border-radius: 22px;
+  padding: 24px;
+  color: white;
+  box-shadow: 0 0 25px rgba(208, 0, 255, 0.08);
+}
+
+.filter-sidebar h4 {
+  color: white;
+  font-size: 1.05rem;
+  margin-bottom: 16px;
 }
 
 .filter-category,
 .filter-variants,
 .stock-filter {
-    margin-bottom: 30px;
+  margin-bottom: 28px;
 }
 
-h4 {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
+.filter-sidebar label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #cfcfcf;
+  font-size: 0.95rem;
+  margin-bottom: 10px;
+  cursor: pointer;
 }
 
-h5 {
-    font-size: 1rem;
-    margin: 10px 0;
-    color: #333;
+.filter-sidebar input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: #d000ff;
+  cursor: pointer;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
+.filter-sidebar label:hover {
+  color: white;
 }
 
-li {
-    margin-bottom: 10px;
-    background-color: transparent !important
-}
-
-input[type="checkbox"] {
-    margin-right: 10px;
-}
-
-label {
-    font-size: 1rem;
-    color: #555;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-label:hover {
-    color: #007bff;
-}
-
-/* Agregar un fondo gris claro en el hover de los elementos */
-li:hover {
-    background-color: #f0f0f0;
-    border-radius: 5px;
-}
-
-/* Estilo para los filtros de categoría */
-.filter-category ul {
-    padding-left: 20px;
-}
-
-/* Estilo para los filtros de variantes */
-.filter-variants ul {
-    padding-left: 20px;
-}
-
-/* Estilo para el filtro de stock */
-.stock-filter ul {
-    padding-left: 20px;
-}
-
-/* Responsividad */
-@media screen and (max-width: 768px) {
-    .filter-sidebar {
-        width: 100%;
-        position: relative;
-        top: 0;
-    }
-
-    h4, h5, label {
-        font-size: 1rem;
-    }
+.filter-sidebar h4::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(135deg, #8a00ff, #d000ff);
+  border-radius: 999px;
+  margin-top: 8px;
 }
