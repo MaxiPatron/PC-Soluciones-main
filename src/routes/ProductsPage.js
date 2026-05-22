@@ -15,6 +15,12 @@ const ProductsPage = () => {
     storage: [],
     stock: "",
   });
+  const brandImages = {
+    Intel: "/brands/intel.jpeg",
+    AMD: "/brands/amd.jpg",
+    NVIDIA: "/brands/nvidia.png",
+    Kingston: "/brands/Kingston.jpg",
+  };
   const [loading, setLoading] = useState(true);
 
   const location = useLocation();
@@ -122,7 +128,11 @@ const ProductsPage = () => {
                   <article key={product.id} className="product-card">
                     <div className="product-image">
                       <img
-                        src={product.image_url || "/placeholder-product.png"}
+                        src={
+                          product.image_url && product.image_url.trim() !== ""
+                            ? product.image_url
+                            : brandImages[product.brand] || "/brands/default.jpg"
+                        }
                         alt={product.name}
                       />
                     </div>
