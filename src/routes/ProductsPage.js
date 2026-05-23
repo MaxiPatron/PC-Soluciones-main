@@ -16,11 +16,26 @@ const ProductsPage = () => {
     stock: "",
   });
   const brandImages = {
-    Intel: "/brands/intel.jpeg",
-    AMD: "/brands/amd.jpg",
-    NVIDIA: "/brands/nvidia.png",
-    Kingston: "/brands/Kingston.jpg",
-  };
+  Intel: "/brands/intel.jpeg",
+  AMD: "/brands/amd.jpg",
+  NVIDIA: "/brands/nvidia.png",
+  Kingston: "/brands/Kingston.jpg",
+  ASUS: "/brands/asus.jpg",
+  MSI: "/brands/msi.jpg",
+  Gigabyte: "/brands/gigabyte.jpg",
+  Biostar: "/brands/biostar.jpg",
+  Corsair: "/brands/corsair.jpg",
+  ADATA: "/brands/adata.jpg",
+  XPG: "/brands/xpg.jpg",
+  Lexar: "/brands/lexar.jpg",
+  Lenovo: "/brands/lenovo.jpg",
+  Microsoft: "/brands/microsoft.jpg",
+  Dahua: "/brands/dahua.jpg",
+  Hikvision: "/brands/hikvision.jpg",
+  Thermaltake: "/brands/thermaltake.jpg",
+  Gamemax: "/brands/gamemax.jpg",
+  "Cooler Master": "/brands/coolermaster.jpg",
+};
   const [loading, setLoading] = useState(true);
 
   const location = useLocation();
@@ -127,14 +142,16 @@ const ProductsPage = () => {
                 {filteredProducts.map((product) => (
                   <article key={product.id} className="product-card">
                     <div className="product-image">
-                      <img
-                        src={
-                          product.image_url && product.image_url.trim() !== ""
-                            ? product.image_url
-                            : brandImages[product.brand] || "/brands/default.jpg"
-                        }
-                        alt={product.name}
-                      />
+                      <div className="product-image">
+                        <img
+                          src={
+                            product.image_url?.trim()
+                              ? product.image_url
+                              : brandImages[product.brand] || "/brands/hardwaregen.png"
+                          }
+                          alt={product.name}
+                        />
+                      </div>
                     </div>
 
                     <div className="product-info">
