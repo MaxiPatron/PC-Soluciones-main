@@ -3,16 +3,16 @@ import { Link } from "react-router-dom";
 import "./CategoriasStyle.css";
 
 const categorias = [
-  { nombre: "Fuentes", imagen: "/Fuente.jpg" },
-  { nombre: "Gabinetes", imagen: "/Gabinete.jpg" },
-  { nombre: "Tarjetas Gráficas", imagen: "/grafica.jpg" },
-  { nombre: "Monitores", imagen: "/Monitor.jpg" },
-  { nombre: "Motherboards", imagen: "/mother.jpg" },
-  { nombre: "Notebooks", imagen: "/notebook.png" },
-  { nombre: "Memorias RAM", imagen: "/ram.jpg" },
-  { nombre: "Microprocesadores", imagen: "/Micro.jpg" },
-  { nombre: "Almacenamiento", imagen: "/ssd.jpg" },
-  { nombre: "Impresoras", imagen: "/impresoras.jpg" },
+  { nombre: "Fuentes", slug: "fuentes", imagen: "/Fuente.jpg" },
+  { nombre: "Gabinetes", slug: "gabinetes", imagen: "/Gabinete.jpg" },
+  { nombre: "Tarjetas Gráficas", slug: "tarjetas-graficas", imagen: "/grafica.jpg" },
+  { nombre: "Monitores", slug: "monitores", imagen: "/Monitor.jpg" },
+  { nombre: "Motherboards", slug: "motherboards", imagen: "/mother.jpg" },
+  { nombre: "Notebooks", slug: "notebooks", imagen: "/notebook.png" },
+  { nombre: "Memoria RAM", slug: "memoria-ram", imagen: "/ram.jpg" },
+  { nombre: "Microprocesadores", slug: "microprocesadores", imagen: "/Micro.jpg" },
+  { nombre: "Almacenamiento", slug: "almacenamiento", imagen: "/ssd.jpg" },
+  { nombre: "Impresoras", slug: "impresoras", imagen: "/impresoras.jpg" },
 ];
 
 const Categorias = () => {
@@ -35,7 +35,7 @@ const Categorias = () => {
         {categorias.map((categoria, index) => (
           <Link
             key={index}
-            to={`/productos?categoria=${categoria.nombre}`}
+            to={`/productos?categoria=${categoria.slug}`}
             className="categoria-card"
           >
             <img src={categoria.imagen} alt={categoria.nombre} />

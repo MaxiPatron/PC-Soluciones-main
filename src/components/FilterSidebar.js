@@ -2,16 +2,9 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../utils/supabaseClient";
 import "./FilterSideBar.css";
 
-const FilterSideBar = ({ onFilterChange }) => {
+const FilterSideBar = ({ onFilterChange, selectedFilters }) => {
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-
-  const [filters, setFilters] = useState({
-    categories: [],
-    brands: [],
-    storage: [],
-    stock: "",
-  });
 
   useEffect(() => {
     const fetchFilters = async () => {
@@ -37,28 +30,22 @@ const FilterSideBar = ({ onFilterChange }) => {
     fetchFilters();
   }, []);
 
-  useEffect(() => {
-    onFilterChange(filters);
-  }, [filters, onFilterChange]);
-
   const toggleArrayFilter = (type, value) => {
-    setFilters((prev) => {
-      const exists = prev[type].includes(value);
+    const exists = selectedFilters[type].includes(value);
 
-      return {
-        ...prev,
-        [type]: exists
-          ? prev[type].filter((item) => item !== value)
-          : [...prev[type], value],
-      };
+    onFilterChange({
+      ...selectedFilters,
+      [type]: exists
+        ? selectedFilters[type].filter((item) => item !== value)
+        : [...selectedFilters[type], value],
     });
   };
 
   const setStockFilter = (value) => {
-    setFilters((prev) => ({
-      ...prev,
-      stock: prev.stock === value ? "" : value,
-    }));
+    onFilterChange({
+      ...selectedFilters,
+      stock: selectedFilters.stock === value ? "" : value,
+    });
   };
 
   return (
@@ -70,7 +57,7 @@ const FilterSideBar = ({ onFilterChange }) => {
           <label key={cat.slug}>
             <input
               type="checkbox"
-              checked={filters.categories.includes(cat.slug)}
+              checked={selectedFilters.categories.includes(cat.slug)}
               onChange={() => toggleArrayFilter("categories", cat.slug)}
             />
             {cat.name}
@@ -85,7 +72,7 @@ const FilterSideBar = ({ onFilterChange }) => {
           <label key={brand}>
             <input
               type="checkbox"
-              checked={filters.brands.includes(brand)}
+              checked={selectedFilters.brands.includes(brand)}
               onChange={() => toggleArrayFilter("brands", brand)}
             />
             {brand}
@@ -100,7 +87,7 @@ const FilterSideBar = ({ onFilterChange }) => {
           <label key={type}>
             <input
               type="checkbox"
-              checked={filters.storage.includes(type)}
+              checked={selectedFilters.storage.includes(type)}
               onChange={() => toggleArrayFilter("storage", type)}
             />
             {type}
@@ -114,7 +101,7 @@ const FilterSideBar = ({ onFilterChange }) => {
         <label>
           <input
             type="checkbox"
-            checked={filters.stock === "in-stock"}
+            checked={selectedFilters.stock === "in-stock"}
             onChange={() => setStockFilter("in-stock")}
           />
           En stock
@@ -123,7 +110,7 @@ const FilterSideBar = ({ onFilterChange }) => {
         <label>
           <input
             type="checkbox"
-            checked={filters.stock === "out-of-stock"}
+            checked={selectedFilters.stock === "out-of-stock"}
             onChange={() => setStockFilter("out-of-stock")}
           />
           Agotado

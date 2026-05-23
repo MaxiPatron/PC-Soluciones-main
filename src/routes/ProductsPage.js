@@ -15,38 +15,38 @@ const ProductsPage = () => {
     storage: [],
     stock: "",
   });
-const brandImages = {
-  Intel: "/brands/intel.jpeg",
-  AMD: "/brands/amd.jpg",
-  NVIDIA: "/brands/nvidia.png",
-  Kingston: "/brands/Kingston.jpg",
-  Corsair: "/brands/corsair.jpg",
-  ADATA: "/brands/adata.jpg",
-  XPG: "/brands/xpg.jpg",
-  ASUS: "/brands/asus.jpg",
-  MSI: "/brands/msi.jpg",
-  Gigabyte: "/brands/gigabyte.jpg",
-  Biostar: "/brands/biostar.jpg",
-  "Cooler Master": "/brands/coolermaster.jpg",
-  Thermaltake: "/brands/thermaltake.jpg",
-  Gamemax: "/brands/gamemax.jpg",
-  Lexar: "/brands/lexar.jpg",
-  Lenovo: "/brands/lenovo.jpg",
-  Microsoft: "/brands/microsoft.jpg",
-  Dahua: "/brands/dahua.jpg",
-  Hikvision: "/brands/hikvision.jpg",
-  Hiksemi: "/brands/hiksemi.jpg",
-  Memox: "/brands/memox.jpg",
-  HP: "/brands/hp.jpg",
-  HPE: "/brands/hpe.jpg",
-  Dell: "/brands/dell.jpg",
-  Acer: "/brands/acer.jpg",
-  Samsung: "/brands/samsung.jpg",
-  Philips: "/brands/philips.jpg",
-  Noblex: "/brands/noblex.jpg",
-  Sandisk: "/brands/sandisk.jpg",
-  "Western Digital": "/brands/westerndigital.jpg",
-};
+  const brandImages = {
+    Intel: "/brands/intel.jpeg",
+    AMD: "/brands/amd.jpg",
+    NVIDIA: "/brands/nvidia.png",
+    Kingston: "/brands/Kingston.jpg",
+    Corsair: "/brands/corsair.jpg",
+    ADATA: "/brands/adata.jpg",
+    XPG: "/brands/xpg.jpg",
+    ASUS: "/brands/asus.jpg",
+    MSI: "/brands/msi.jpg",
+    Gigabyte: "/brands/gigabyte.jpg",
+    Biostar: "/brands/biostar.jpg",
+    "Cooler Master": "/brands/coolermaster.jpg",
+    Thermaltake: "/brands/thermaltake.jpg",
+    Gamemax: "/brands/gamemax.jpg",
+    Lexar: "/brands/lexar.jpg",
+    Lenovo: "/brands/lenovo.jpg",
+    Microsoft: "/brands/microsoft.jpg",
+    Dahua: "/brands/dahua.jpg",
+    Hikvision: "/brands/hikvision.jpg",
+    Hiksemi: "/brands/hiksemi.jpg",
+    Memox: "/brands/memox.jpg",
+    HP: "/brands/hp.jpg",
+    HPE: "/brands/hpe.jpg",
+    Dell: "/brands/dell.jpg",
+    Acer: "/brands/acer.jpg",
+    Samsung: "/brands/samsung.jpg",
+    Philips: "/brands/philips.jpg",
+    Noblex: "/brands/noblex.jpg",
+    Sandisk: "/brands/sandisk.jpg",
+    "Western Digital": "/brands/westerndigital.jpg",
+  };
 
   const [loading, setLoading] = useState(true);
 
@@ -54,10 +54,27 @@ const brandImages = {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
+
     const searchQuery = queryParams.get("search");
+    const categoryQuery = queryParams.get("categoria");
+    const brandQuery = queryParams.get("brand");
 
     if (searchQuery) {
       setSearch(searchQuery);
+    }
+
+    if (categoryQuery) {
+      setSelectedFilters((prev) => ({
+        ...prev,
+        categories: [categoryQuery],
+      }));
+    }
+
+    if (brandQuery) {
+      setSelectedFilters((prev) => ({
+        ...prev,
+        brands: [brandQuery],
+      }));
     }
   }, [location.search]);
 
@@ -140,7 +157,10 @@ const brandImages = {
         </section>
 
         <section className="products-layout">
-          <FilterSidebar onFilterChange={handleFilterChange} />
+          <FilterSidebar
+            onFilterChange={handleFilterChange}
+            selectedFilters={selectedFilters}
+          />
 
           <div className="products-content">
             <div className="products-topbar">
@@ -154,16 +174,14 @@ const brandImages = {
                 {filteredProducts.map((product) => (
                   <article key={product.id} className="product-card">
                     <div className="product-image">
-                      <div className="product-image">
-                        <img
-                          src={
-                            product.image_url?.trim()
-                              ? product.image_url
-                              : brandImages[product.brand] || "/brands/hardwaregen.png"
-                          }
-                          alt={product.name}
-                        />
-                      </div>
+                      <img
+                        src={
+                          product.image_url?.trim()
+                            ? product.image_url
+                            : brandImages[product.brand] || "/brands/hardwaregen.png"
+                        }
+                        alt={product.name}
+                      />
                     </div>
 
                     <div className="product-info">
