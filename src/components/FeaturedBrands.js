@@ -13,7 +13,7 @@ const brandImages = {
 };
 
 const FeaturedBrands = () => {
-  const [selectedBrand, setSelectedBrand] = useState("Corsair");
+  const [selectedBrand, setSelectedBrand] = useState("AMD");
   const [brandProducts, setBrandProducts] = useState([]);
 
   useEffect(() => {
