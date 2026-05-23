@@ -148,7 +148,7 @@ function Login() {
                   value={form.fullName}
                   onChange={handleChange}
                   className="login-input"
-                  placeholder="Máximo Patrón"
+                  placeholder="Nombre y Apellido"
                   required
                 />
               </div>
@@ -175,7 +175,7 @@ function Login() {
                     value={form.city}
                     onChange={handleChange}
                     className="login-input"
-                    placeholder="Córdoba"
+                    placeholder="Ciudad"
                   />
                 </div>
 
@@ -187,7 +187,7 @@ function Login() {
                     value={form.province}
                     onChange={handleChange}
                     className="login-input"
-                    placeholder="Córdoba"
+                    placeholder="Provincia"
                   />
                 </div>
               </div>
@@ -202,7 +202,7 @@ function Login() {
               value={form.email}
               onChange={handleChange}
               className="login-input"
-              placeholder="youremail@site.com"
+              placeholder="tuemail@gmail.com"
               required
             />
           </div>
