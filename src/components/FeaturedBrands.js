@@ -1,38 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./FeaturedBrands.css";
 import { Link } from "react-router-dom";
-const brands = ["Corsair", "AMD", "Intel", "Kingston", "NVIDIA"];
+import { supabase } from "../utils/supabaseClient";
 
-const products = {
-  Corsair: [
-    { name: "Corsair Vengeance 16GB DDR4", price: "$65.000", image: "/ram.jpg" },
-    { name: "Fuente Corsair 750W 80 Plus", price: "$120.000", image: "/Fuente.jpg" },
-    { name: "Gabinete Corsair RGB", price: "$180.000", image: "/Gabinete.jpg" },
-  ],
-  AMD: [
-    { name: "Ryzen 5 5600X", price: "$180.000", image: "/Micro.jpg" },
-    { name: "Ryzen 7 5700X", price: "$260.000", image: "/Micro.jpg" },
-    { name: "Motherboard AM4 Gaming", price: "$150.000", image: "/mother.jpg" },
-  ],
-  Intel: [
-    { name: "Intel Core i5 12400F", price: "$210.000", image: "/Micro.jpg" },
-    { name: "Intel Core i7 12700K", price: "$420.000", image: "/Micro.jpg" },
-    { name: "Motherboard Intel B660", price: "$170.000", image: "/mother.jpg" },
-  ],
-  Kingston: [
-    { name: "SSD Kingston NV2 1TB", price: "$85.000", image: "/ssd.jpg" },
-    { name: "Kingston Fury 16GB", price: "$70.000", image: "/ram.jpg" },
-    { name: "SSD Kingston 480GB", price: "$45.000", image: "/ssd.jpg" },
-  ],
-  NVIDIA: [
-    { name: "RTX 3060 12GB", price: "$320.000", image: "/grafica.jpg" },
-    { name: "RTX 4070", price: "$850.000", image: "/grafica.jpg" },
-    { name: "RTX 4060 Ti", price: "$610.000", image: "/grafica.jpg" },
-  ],
+const brands = ["AMD", "Intel", "Kingston", "NVIDIA"];
+
+const brandImages = {
+  AMD: "/brands/amd.jpg",
+  Intel: "/brands/intel.jpeg",
+  Kingston: "/brands/Kingston.jpg",
+  NVIDIA: "/brands/nvidia.png",
 };
 
 const FeaturedBrands = () => {
   const [selectedBrand, setSelectedBrand] = useState("Corsair");
+  const [brandProducts, setBrandProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchBrandProducts = async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .eq("brand", selectedBrand)
+        .eq("active", true)
+        .limit(3);
+
+      if (!error) setBrandProducts(data || []);
+    };
+
+    fetchBrandProducts();
+  }, [selectedBrand]);
 
   return (
     <section className="featured-brands">
@@ -56,24 +53,41 @@ const FeaturedBrands = () => {
       </div>
 
       <div className="brand-showcase">
-        <div className="brand-banner">
+        <Link
+          to={`/productos?brand=${selectedBrand}`}
+          className="brand-banner brand-banner-link"
+          style={{
+            backgroundImage: `linear-gradient(to right, rgba(0,0,0,.9), rgba(0,0,0,.45)), url(${brandImages[selectedBrand]})`,
+          }}
+        >
           <div>
             <span>Marca destacada</span>
             <h3>{selectedBrand}</h3>
-            <p>Componentes seleccionados para rendimiento, gaming y productividad.</p>
+            <p>Ver todos los productos disponibles de {selectedBrand}.</p>
           </div>
-        </div>
+        </Link>
 
-        {products[selectedBrand].map((product, index) => (
-          <article className="brand-product-card" key={index}>
-            <img src={product.image} alt={product.name} />
+        {brandProducts.map((product) => (
+          <article className="brand-product-card" key={product.id}>
+            <img
+              src={
+                product.image_url?.trim()
+                  ? product.image_url
+                  : brandImages[product.brand] || "/brands/hardwaregen.png"
+              }
+              alt={product.name}
+            />
 
             <h4>{product.name}</h4>
 
-            <p>{product.price}</p>
+            <p>
+              {Number(product.price) > 0
+                ? `$${Number(product.price).toLocaleString("es-AR")}`
+                : "Consultar precio"}
+            </p>
 
             <Link
-              to={`/productos?brand=${selectedBrand}`}
+              to={`/producto/${product.slug}`}
               className="brand-product-btn"
             >
               Ver producto

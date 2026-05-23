@@ -151,3 +151,20 @@
     grid-template-columns: 1fr;
   }
 }
+.single-brand-showcase {
+  grid-template-columns: 1fr;
+}
+
+.brand-banner-link {
+  min-height: 320px;
+  background-size: cover;
+  background-position: center;
+  text-decoration: none;
+  color: white;
+}
+
+.brand-banner-link strong {
+  display: inline-block;
+  margin-top: 18px;
+  color: #d000ff;
+}
