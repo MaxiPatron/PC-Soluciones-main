@@ -1,13 +1,41 @@
 import React, { useEffect, useState } from "react";
+import { supabase } from "../utils/supabaseClient";
 import "./FilterSideBar.css";
 
 const FilterSideBar = ({ onFilterChange }) => {
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
+
   const [filters, setFilters] = useState({
     categories: [],
     brands: [],
     storage: [],
     stock: "",
   });
+
+  useEffect(() => {
+    const fetchFilters = async () => {
+      const { data: catData } = await supabase
+        .from("categories")
+        .select("name, slug")
+        .order("name", { ascending: true });
+
+      const { data: productData } = await supabase
+        .from("products")
+        .select("brand")
+        .not("brand", "is", null);
+
+      setCategories(catData || []);
+
+      const uniqueBrands = [
+        ...new Set(productData?.map((p) => p.brand).filter(Boolean)),
+      ].sort();
+
+      setBrands(uniqueBrands);
+    };
+
+    fetchFilters();
+  }, []);
 
   useEffect(() => {
     onFilterChange(filters);
@@ -38,53 +66,31 @@ const FilterSideBar = ({ onFilterChange }) => {
       <div className="filter-category">
         <h4>Categorías</h4>
 
-        <label>
-          <input
-            type="checkbox"
-            onChange={() => toggleArrayFilter("categories", "microprocesadores")}
-          />
-          Microprocesadores
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            onChange={() => toggleArrayFilter("categories", "tarjetas-graficas")}
-          />
-          Tarjetas Gráficas
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            onChange={() => toggleArrayFilter("categories", "memoria-ram")}
-          />
-          Memoria RAM
-        </label>
-
-        <label>
-          <input
-            type="checkbox"
-            onChange={() => toggleArrayFilter("categories", "almacenamiento")}
-          />
-          Almacenamiento
-        </label>
+        {categories.map((cat) => (
+          <label key={cat.slug}>
+            <input
+              type="checkbox"
+              checked={filters.categories.includes(cat.slug)}
+              onChange={() => toggleArrayFilter("categories", cat.slug)}
+            />
+            {cat.name}
+          </label>
+        ))}
       </div>
 
       <div className="filter-variants">
         <h4>Marcas</h4>
 
-        {["Intel", "AMD", "NVIDIA", "Corsair", "Kingston", "G.Skill"].map(
-          (brand) => (
-            <label key={brand}>
-              <input
-                type="checkbox"
-                onChange={() => toggleArrayFilter("brands", brand)}
-              />
-              {brand}
-            </label>
-          )
-        )}
+        {brands.map((brand) => (
+          <label key={brand}>
+            <input
+              type="checkbox"
+              checked={filters.brands.includes(brand)}
+              onChange={() => toggleArrayFilter("brands", brand)}
+            />
+            {brand}
+          </label>
+        ))}
       </div>
 
       <div className="filter-variants">
@@ -94,6 +100,7 @@ const FilterSideBar = ({ onFilterChange }) => {
           <label key={type}>
             <input
               type="checkbox"
+              checked={filters.storage.includes(type)}
               onChange={() => toggleArrayFilter("storage", type)}
             />
             {type}
