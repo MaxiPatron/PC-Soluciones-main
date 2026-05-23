@@ -34,6 +34,7 @@ const brandImages = {
   Philips: "/brands/philips.jpg",
   Noblex: "/brands/noblex.jpg",
   Sandisk: "/brands/sandisk.jpg",
+  "Western Digital": "/brands/westerndigital.jpg",
 };
 
 function ProductDetail() {
