@@ -195,7 +195,25 @@ const ProductForm = () => {
     });
 
   const brands = [...new Set(products.map((p) => p.brand).filter(Boolean))];
+  const formatARS = (value) => {
+    const number = Number(value || 0);
 
+    return number.toLocaleString("es-AR", {
+      style: "currency",
+      currency: "ARS",
+      maximumFractionDigits: 0,
+    });
+  };
+
+  const formatUSD = (value) => {
+    const number = Number(value || 0);
+
+    if (!number) return "-";
+
+    return `U$S ${number.toLocaleString("es-AR", {
+      maximumFractionDigits: 2,
+    })}`;
+  };
   return (
     <div className="container mt-5">
       <h2>Cargar Producto</h2>
@@ -413,18 +431,10 @@ const ProductForm = () => {
                 <td>{prod.name}</td>
                 <td>{prod.sku || "Sin SKU"}</td>
                 <td>{prod.brand}</td>
-                <td>${Number(prod.cost_price || 0).toLocaleString("es-AR")}</td>
-                <td>
-                  {prod.cost_price_usd
-                    ? `U$S ${Number(prod.cost_price_usd).toLocaleString("es-AR")}`
-                    : "-"}
-                </td>
-                <td>{prod.iva ? `${prod.iva}%` : "-"}</td>
-                <td>
-                  {prod.price
-                    ? `$${Number(prod.price).toLocaleString("es-AR")}`
-                    : "Sin precio"}
-                </td>
+                <td>{formatARS(prod.cost_price)}</td>
+                <td>{formatUSD(prod.cost_price_usd)}</td>
+                <td>{prod.iva ? `${Number(prod.iva).toLocaleString("es-AR")}%` : "-"}</td>
+                <td>{prod.price ? formatARS(prod.price) : "Sin precio"}</td>
                 <td>{prod.supplier_code || "-"}</td>
                 <td>{prod.stock}</td>
                 <td>{prod.categories?.name || "Sin categoría"}</td>
