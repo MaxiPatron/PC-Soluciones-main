@@ -108,10 +108,8 @@ function ProductDetail() {
 
             <p className="detail-brand">{product.brand}</p>
 
-            <p className="detail-price">
-              {Number(product.price) > 0
-                ? `$${Number(product.price).toLocaleString("es-AR")}`
-                : "Consultar precio"}
+            <p className="product-price">
+              Consultar precio
             </p>
 
             <div className="detail-meta">

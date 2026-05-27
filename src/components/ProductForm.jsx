@@ -377,6 +377,27 @@ const ProductForm = () => {
 
       <hr className="my-5" />
 
+      <div className="admin-dollar-card">
+        <div>
+          <span>Dólar mayorista</span>
+
+          <h3>
+            $
+            {exchangeRate
+              ? Number(exchangeRate.usd_ars).toLocaleString("es-AR")
+              : "Cargando..."}
+          </h3>
+
+          <p>
+            Última actualización:
+            {" "}
+            {exchangeRate?.updated_at
+              ? new Date(exchangeRate.updated_at).toLocaleString("es-AR")
+              : "-"}
+          </p>
+        </div>
+      </div>
+
       <h3>Productos Cargados</h3>
       <div className="admin-table-filters">
         <input
