@@ -292,7 +292,7 @@ const ProductForm = () => {
         </div>
 
         <div className="col-md-4">
-          <label className="form-label">Precio</label>
+          <label className="form-label">Precio sugerido interno</label>
           <input
             type="number"
             className="form-control"
@@ -395,7 +395,11 @@ const ProductForm = () => {
               <th>Nombre</th>
               <th>SKU</th>
               <th>Marca</th>
-              <th>Precio</th>
+              <th>Costo ARS</th>
+              <th>Costo USD</th>
+              <th>IVA</th>
+              <th>Precio sugerido</th>
+              <th>Cód. mayorista</th>
               <th>Stock</th>
               <th>Categoría</th>
               <th>Activo</th>
@@ -409,7 +413,19 @@ const ProductForm = () => {
                 <td>{prod.name}</td>
                 <td>{prod.sku || "Sin SKU"}</td>
                 <td>{prod.brand}</td>
-                <td>${prod.price}</td>
+                <td>${Number(prod.cost_price || 0).toLocaleString("es-AR")}</td>
+                <td>
+                  {prod.cost_price_usd
+                    ? `U$S ${Number(prod.cost_price_usd).toLocaleString("es-AR")}`
+                    : "-"}
+                </td>
+                <td>{prod.iva ? `${prod.iva}%` : "-"}</td>
+                <td>
+                  {prod.price
+                    ? `$${Number(prod.price).toLocaleString("es-AR")}`
+                    : "Sin precio"}
+                </td>
+                <td>{prod.supplier_code || "-"}</td>
                 <td>{prod.stock}</td>
                 <td>{prod.categories?.name || "Sin categoría"}</td>
                 <td>{prod.active ? "Sí" : "No"}</td>
