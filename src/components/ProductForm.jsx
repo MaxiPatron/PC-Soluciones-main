@@ -21,6 +21,8 @@ const ProductForm = () => {
   const [sortPrice, setSortPrice] = useState("");
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [exchangeRate, setExchangeRate] = useState(null);
+  const [newDollar, setNewDollar] = useState("");
   const [editingId, setEditingId] = useState(null);
   const handleEdit = (prod) => {
     setProduct({
@@ -80,9 +82,44 @@ const ProductForm = () => {
     if (!error) setProducts(data || []);
   };
 
+  const fetchExchangeRate = async () => {
+    const { data, error } = await supabase
+      .from("exchange_rates")
+      .select("*")
+      .eq("id", 1)
+      .single();
+
+    if (error) {
+      console.error("Error al obtener dólar:", error);
+      return;
+    }
+
+    setExchangeRate(data);
+    setNewDollar(data.usd_ars);
+  };
+
+  const handleUpdateDollar = async () => {
+    const { error } = await supabase
+      .from("exchange_rates")
+      .update({
+        usd_ars: Number(newDollar),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", 1);
+
+    if (error) {
+      alert("Error al actualizar dólar");
+      return;
+    }
+
+    alert("Dólar actualizado");
+    fetchExchangeRate();
+  };
+
   useEffect(() => {
     fetchCategories();
     fetchProducts();
+    fetchExchangeRate();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -162,6 +199,33 @@ const ProductForm = () => {
   return (
     <div className="container mt-5">
       <h2>Cargar Producto</h2>
+      <div className="admin-dollar-card">
+        <div>
+          <span>Dólar mayorista</span>
+          <h3>
+            ${exchangeRate ? Number(exchangeRate.usd_ars).toLocaleString("es-AR") : "Cargando..."}
+          </h3>
+          <p>
+            Última actualización:{" "}
+            {exchangeRate?.updated_at
+              ? new Date(exchangeRate.updated_at).toLocaleString("es-AR")
+              : "-"}
+          </p>
+        </div>
+
+        <div className="admin-dollar-actions">
+          <input
+            type="number"
+            value={newDollar}
+            onChange={(e) => setNewDollar(e.target.value)}
+            placeholder="Nuevo dólar"
+          />
+
+          <button type="button" onClick={handleUpdateDollar}>
+            Actualizar dólar
+          </button>
+        </div>
+      </div>
 
       <form onSubmit={handleSubmit} className="row g-3">
         <div className="col-md-6">

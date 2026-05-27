@@ -190,9 +190,7 @@ const ProductsPage = () => {
 
                       <div className="product-bottom">
                         <p className="product-price">
-                          {Number(product.price) > 0
-                            ? `$${Number(product.price).toLocaleString("es-AR")}`
-                            : "Consultar precio"}
+                          Consultar precio
                         </p>
 
                         <span className={product.stock > 0 ? "stock ok" : "stock no"}>
