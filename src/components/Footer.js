@@ -2,7 +2,6 @@ import "./FooterStyle.css";
 import React, { forwardRef } from "react";
 import { FaHome, FaMailBulk } from "react-icons/fa";
 import { AiFillInstagram } from "react-icons/ai";
-import { FaLinkedinIn } from "react-icons/fa";
 const Footer = forwardRef((props, ref) => {
     return (
         <div className="Footer" ref={ref}>
@@ -21,9 +20,6 @@ const Footer = forwardRef((props, ref) => {
                 <div>
                     <div md={12} className="home-about-social">
                         <ul className="home-about-social-links">
-                            <li className="social-icons">
-                                <a href="https://www.linkedin.com/in/maximo-patron-a1b1a4262/" className="icon-divour  home-social-icons"><FaLinkedinIn /></a>
-                            </li>
                             <li className="social-icons">
                                 <a href="https://www.instagram.com/vas_pc_soluciones/" className="icon-divour home-social-icons"><AiFillInstagram /></a>
                             </li>
