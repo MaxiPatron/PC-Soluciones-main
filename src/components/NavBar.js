@@ -58,7 +58,7 @@ const NavBar = ({ isProfile }) => {
         <li><Link to="/">Home</Link></li>
         <li><Link to="/productos">Productos</Link></li>
         <li><a href="#about">About We</a></li>
-
+        <li><Link to="/carrito">Carrito</Link></li>
         {isAdmin && (
           <li><Link to="/ProductsForm">Admin</Link></li>
         )}

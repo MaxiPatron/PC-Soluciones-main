@@ -5,10 +5,12 @@ import NavBar from "../components/NavBar";
 import FilterSidebar from "../components/FilterSidebar";
 import "../components/ProductsPage.css";
 import { Link } from "react-router-dom";
+import { useCart } from "../components/CartContext";
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [addedProductId, setAddedProductId] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState({
     categories: [],
     brands: [],
@@ -144,6 +146,16 @@ const ProductsPage = () => {
   const handleFilterChange = (filters) => {
     setSelectedFilters(filters);
   };
+  const handleAddToCart = (product) => {
+    addToCart(product);
+    setAddedProductId(product.id);
+
+    setTimeout(() => {
+      setAddedProductId(null);
+    }, 1000);
+  };
+
+  const { addToCart } = useCart();
 
   return (
     <div>
@@ -199,7 +211,6 @@ const ProductsPage = () => {
                       </div>
 
                       <div className="product-actions">
-
                         <Link
                           to={`/producto/${product.slug}`}
                           className="product-btn secondary"
@@ -207,17 +218,23 @@ const ProductsPage = () => {
                           Ver producto
                         </Link>
 
+                        <button
+                          className={`product-btn ${addedProductId === product.id ? "added" : ""}`}
+                          onClick={() => handleAddToCart(product)}
+                        >
+                          {addedProductId === product.id ? "Agregado ✓" : "Agregar"}
+                        </button>
+
                         <a
-                          className="product-btn"
+                          className="product-btn whatsapp"
                           href={`https://wa.me/5493513256553?text=${encodeURIComponent(
-                            `Hola! Quiero consultar por este producto: ${product.name}`
+                            `Hola! Quiero consultar por este producto: ${product.name} - SKU: ${product.sku || "Sin SKU"}`
                           )}`}
                           target="_blank"
                           rel="noreferrer"
                         >
                           Consultar
                         </a>
-
                       </div>
                     </div>
                   </article>

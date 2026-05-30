@@ -184,12 +184,51 @@
 .product-grid {
   width: 100%;
 }
+
 .product-actions {
-  display: flex;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
   margin-top: 12px;
 }
 
-.product-actions .product-btn {
-  flex: 1;
+.product-actions .whatsapp {
+  grid-column: 1 / span 2;
+}
+
+.product-btn {
+  min-height: 42px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.product-btn.whatsapp {
+  border: 1px solid #b000ff;
+  color: white;
+}
+.product-btn.added {
+  background: linear-gradient(135deg, #00b36b, #00ff9d);
+  color: #050505;
+  animation: addedPulse 0.35s ease;
+}
+
+@keyframes addedPulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }

@@ -12,6 +12,8 @@ import ProductsForm from "./routes/ProductAbm"
 import AdminRoute from "./components/AdminRoute";
 import UpdatePassword from "./routes/UpdatePassword";
 import ProductDetail from "./routes/ProductDetail";
+import { CartProvider } from "./components/CartContext";
+import CartPage from "./routes/CartPage";
 function App() {
   const [load, upadateLoad] = useState(true);
   useEffect(() => {
@@ -23,26 +25,29 @@ function App() {
 
   return (
     <div className="App" id={load ? "no-scroll" : "scroll"}>
-      <AuthProvider>
-        <Preloader load={load} />
-        <Scroll />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/productos" element={<ProductsPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route
-            path="/ProductsForm"
-            element={
-              <AdminRoute>
-                <ProductsForm />
-              </AdminRoute>
-            }
-          />
-          <Route path="/update-password" element={<UpdatePassword />} />
-          <Route path="/producto/:slug" element={<ProductDetail />} />
-        </Routes>
-      </AuthProvider>
+      <CartProvider>
+        <AuthProvider>
+          <Preloader load={load} />
+          <Scroll />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/productos" element={<ProductsPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route
+              path="/ProductsForm"
+              element={
+                <AdminRoute>
+                  <ProductsForm />
+                </AdminRoute>
+              }
+            />
+            <Route path="/update-password" element={<UpdatePassword />} />
+            <Route path="/producto/:slug" element={<ProductDetail />} />
+            <Route path="/carrito" element={<CartPage />} />
+          </Routes>
+        </AuthProvider>
+      </CartProvider>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { supabase } from "../utils/supabaseClient";
 import NavBar from "../components/NavBar";
 import "../components/ProductDetail.css";
-
+import { useCart } from "../components/CartContext";
 const brandImages = {
   Intel: "/brands/intel.jpeg",
   AMD: "/brands/amd.jpg",
@@ -39,8 +39,10 @@ const brandImages = {
 
 function ProductDetail() {
   const { slug } = useParams();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [added, setAdded] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -79,6 +81,14 @@ function ProductDetail() {
       </>
     );
   }
+  const handleAddToCart = () => {
+    addToCart(product);
+    setAdded(true);
+
+    setTimeout(() => {
+      setAdded(false);
+    }, 1200);
+  };
 
   const image =
     product.image_url?.trim() ||
@@ -121,16 +131,25 @@ function ProductDetail() {
               {product.description || "Producto disponible para consulta."}
             </p>
 
-            <a
-              className="detail-whatsapp"
-              href={`https://wa.me/5493513256553?text=${encodeURIComponent(
-                `Hola! Quiero consultar por este producto: ${product.name} - SKU: ${product.sku || "Sin SKU"}`
-              )}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Consultar por WhatsApp
-            </a>
+            <div className="detail-actions">
+              <button
+                className={`detail-cart-btn ${added ? "added" : ""}`}
+                onClick={handleAddToCart}
+              >
+                {added ? "Agregado ✓" : "Agregar al carrito"}
+              </button>
+
+              <a
+                className="detail-whatsapp-btn"
+                href={`https://wa.me/5493513256553?text=${encodeURIComponent(
+                  `Hola! Quiero consultar por este producto: ${product.name} - SKU: ${product.sku || "Sin SKU"}`
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Consultar WhatsApp
+              </a>
+            </div>
           </div>
         </section>
       </main>
