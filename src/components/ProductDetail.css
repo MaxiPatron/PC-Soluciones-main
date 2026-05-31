@@ -143,6 +143,27 @@
 .detail-whatsapp-btn:hover {
   transform: translateY(-2px);
 }
+
 .detail-whatsapp-btn {
   margin: 0;
+}
+
+.detail-cart-btn.added {
+  background: linear-gradient(135deg, #00b36b, #00ff9d) !important;
+  color: #050505 !important;
+  animation: addedPulse 0.35s ease;
+}
+
+@keyframes addedPulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }

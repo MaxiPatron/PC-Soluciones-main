@@ -6,7 +6,7 @@ import { Form, FormControl } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../utils/supabaseClient";
 import useIsAdmin from "../utils/useIsAdmin";
-
+import { useCart } from "./CartContext";
 const NavBar = ({ isProfile }) => {
   const [click, setClick] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,7 +14,8 @@ const NavBar = ({ isProfile }) => {
 
   const { user } = useAuth();
   const { isAdmin } = useIsAdmin();
-
+  const { cart } = useCart();
+  const cartQuantity = cart.reduce((total, item) => total + item.quantity, 0);
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim() !== "") {
@@ -58,7 +59,14 @@ const NavBar = ({ isProfile }) => {
         <li><Link to="/">Home</Link></li>
         <li><Link to="/productos">Productos</Link></li>
         <li><a href="#about">About We</a></li>
-        <li><Link to="/carrito">Carrito</Link></li>
+        <li>
+          <Link to="/carrito" className="cart-nav-link">
+            Carrito
+            {cartQuantity > 0 && (
+              <span className="cart-badge">{cartQuantity}</span>
+            )}
+          </Link>
+        </li>
         {isAdmin && (
           <li><Link to="/ProductsForm">Admin</Link></li>
         )}
