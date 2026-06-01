@@ -14,6 +14,7 @@ import UpdatePassword from "./routes/UpdatePassword";
 import ProductDetail from "./routes/ProductDetail";
 import { CartProvider } from "./components/CartContext";
 import CartPage from "./routes/CartPage";
+import BuildPcPage from "./routes/BuildPcPage";
 function App() {
   const [load, upadateLoad] = useState(true);
   useEffect(() => {
@@ -45,6 +46,7 @@ function App() {
             <Route path="/update-password" element={<UpdatePassword />} />
             <Route path="/producto/:slug" element={<ProductDetail />} />
             <Route path="/carrito" element={<CartPage />} />
+            <Route path="/armar-pc" element={<BuildPcPage />} />
           </Routes>
         </AuthProvider>
       </CartProvider>

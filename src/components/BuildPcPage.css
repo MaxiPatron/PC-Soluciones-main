@@ -1,0 +1,245 @@
+.build-page {
+  min-height: 100vh;
+  padding: 120px 5% 70px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(208, 0, 255, 0.18), transparent 28%),
+    #050505;
+  color: white;
+}
+
+.build-hero span {
+  color: #d000ff;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+
+.build-hero h1 {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  margin: 10px 0;
+}
+
+.build-hero p {
+  color: #cfcfcf;
+  max-width: 760px;
+}
+
+.build-layout {
+  margin-top: 45px;
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 28px;
+  align-items: start;
+}
+
+.build-main {
+  background: #111;
+  border: 1px solid rgba(208, 0, 255, 0.25);
+  border-radius: 26px;
+  padding: 24px;
+}
+
+.build-section-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.build-section-header span {
+  color: #d000ff;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.build-section-header h2 {
+  margin: 5px 0 0;
+}
+
+.build-section-header input {
+  width: min(420px, 100%);
+  background: #070707;
+  border: 1px solid #333;
+  color: white;
+  padding: 13px 16px;
+  border-radius: 14px;
+  outline: none;
+}
+
+.build-products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-height: 720px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.build-product-card {
+  background: #090909;
+  color: white;
+  border: 1px solid #2d2d2d;
+  border-radius: 18px;
+  padding: 14px;
+  cursor: pointer;
+  text-align: left;
+  display: grid;
+  gap: 12px;
+  transition: 0.25s ease;
+}
+
+.build-product-card:hover,
+.build-product-card.active {
+  border-color: #d000ff;
+  background: rgba(208, 0, 255, 0.14);
+  transform: translateY(-2px);
+}
+
+.build-product-card img {
+  width: 100%;
+  height: 145px;
+  object-fit: contain;
+  background: radial-gradient(circle, rgba(208, 0, 255, 0.12), #050505);
+  border-radius: 14px;
+}
+
+.build-product-card span {
+  color: #d000ff;
+  font-weight: 900;
+}
+
+.build-product-card h3 {
+  font-size: 0.95rem;
+  line-height: 1.15;
+  margin: 7px 0;
+}
+
+.build-product-card small {
+  color: #aaa;
+}
+
+.build-summary {
+  position: sticky;
+  top: 100px;
+  background: #111;
+  border: 1px solid rgba(208, 0, 255, 0.3);
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.summary-item {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #292929;
+  background: transparent;
+  color: white;
+  padding: 15px 0;
+  display: grid;
+  gap: 5px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.summary-item span {
+  color: #d000ff;
+  font-weight: 900;
+}
+
+.summary-item strong {
+  font-size: 0.88rem;
+  line-height: 1.2;
+}
+
+.summary-item.active {
+  background: rgba(208, 0, 255, 0.12);
+  padding-left: 10px;
+  border-radius: 12px;
+}
+
+.build-whatsapp {
+  margin-top: 22px;
+  width: 100%;
+  min-height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #8a00ff, #d000ff);
+  color: white;
+  text-decoration: none;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1300px) {
+  .build-products-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1000px) {
+  .build-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .build-summary {
+    position: static;
+  }
+}
+
+@media (max-width: 700px) {
+  .build-section-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .build-products-grid {
+    grid-template-columns: 1fr;
+  }
+}.build-status {
+  margin-top: 18px;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 700;
+}
+
+.build-status.ok {
+  background: rgba(0, 255, 140, 0.12);
+  border: 1px solid rgba(0, 255, 140, 0.4);
+  color: #00ff9d;
+}
+
+.build-status.error {
+  background: rgba(255, 60, 60, 0.12);
+  border: 1px solid rgba(255, 60, 60, 0.4);
+  color: #ff6b6b;
+}
+
+.build-status p {
+  margin: 8px 0 0;
+  color: white;
+  font-size: 0.85rem;
+}
+
+.build-status .warning {
+  color: #ffd166;
+}
+.ram-selector {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ram-selector button {
+  background: #111;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.ram-selector button.active {
+  background: linear-gradient(135deg, #8a00ff, #d000ff);
+  border-color: #d000ff;
+}

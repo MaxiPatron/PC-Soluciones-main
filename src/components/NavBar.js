@@ -58,6 +58,7 @@ const NavBar = ({ isProfile }) => {
       <ul className={click ? "navbar active" : "navbar"}>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/productos">Productos</Link></li>
+        <li><Link to="/armar-pc">Armá tu PC</Link></li>
         <li><a href="#about">About We</a></li>
         <li>
           <Link to="/carrito" className="cart-nav-link">
