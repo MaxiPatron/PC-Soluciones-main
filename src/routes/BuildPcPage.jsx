@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../utils/supabaseClient";
 import NavBar from "../components/NavBar";
 import "../components/BuildPcPage.css";
+import { sortBuildProducts } from "../utils/sortBuildProducts";
 import {
     getCpuSocket,
     getMotherSocket,
@@ -45,6 +46,7 @@ const BuildPcPage = () => {
     const [activeStep, setActiveStep] = useState("cpu");
     const [search, setSearch] = useState("");
     const [ramQuantity, setRamQuantity] = useState(1);
+    const [sortOrder, setSortOrder] = useState("asc");
     useEffect(() => {
         const fetchProducts = async () => {
             const { data, error } = await supabase
@@ -117,7 +119,7 @@ const BuildPcPage = () => {
             product.sku?.toLowerCase().includes(search.toLowerCase())
         );
 
-        return list;
+        return sortBuildProducts(list, step.key, sortOrder);
     };
 
     const handleSelect = (stepKey, product) => {
@@ -215,7 +217,13 @@ const BuildPcPage = () => {
                                 <span>Paso actual</span>
                                 <h2>{currentStep?.title}</h2>
                             </div>
-
+                            <button
+                                type="button"
+                                className="build-sort-btn"
+                                onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                            >
+                                Orden: {sortOrder === "asc" ? "menor a mayor" : "mayor a menor"}
+                            </button>
                             <input
                                 type="text"
                                 placeholder={`Buscar ${currentStep?.title?.toLowerCase()}...`}
