@@ -160,6 +160,34 @@ export default function ProductsManager({ products, setProducts, categories, exc
     toast(`${ids.length} productos ${label}`);
   };
 
+  // Desactiva todos los productos que muestra el filtro actual (activos sin stock)
+  const [deactivating, setDeactivating] = useState(false);
+  const deactivateFiltered = async () => {
+    const ids = filtered.filter((p) => p.active).map((p) => p.id);
+    if (!ids.length) return;
+    const ok = await confirm({
+      title: `¿Desactivar ${ids.length} productos sin stock?`,
+      message:
+        "Se van a ocultar de la tienda y del Armá tu PC. No se borran: cuando vuelva el stock los podés activar de nuevo con el filtro \"Inactivos\".",
+      confirmText: "Desactivar todos",
+    });
+    if (!ok) return;
+    setDeactivating(true);
+    const done = [];
+    // De a tandas para no pasarse del largo de URL de Supabase
+    for (let i = 0; i < ids.length; i += 150) {
+      const chunk = ids.slice(i, i + 150);
+      const { error } = await supabase.from("products").update({ active: false }).in("id", chunk);
+      if (error) break;
+      done.push(...chunk);
+    }
+    setDeactivating(false);
+    if (done.length) patchLocal(done, { active: false });
+    setSelected(new Set());
+    if (done.length < ids.length) toast(`Se desactivaron ${done.length} de ${ids.length}. Hubo un error, probá de nuevo.`, "error");
+    else toast(`${done.length} productos desactivados`);
+  };
+
   const deleteProducts = async (ids) => {
     const one = ids.length === 1 ? products.find((p) => p.id === ids[0]) : null;
     const ok = await confirm({
@@ -278,6 +306,15 @@ export default function ProductsManager({ products, setProducts, categories, exc
         {hasFilters && (
           <button className="adm-link" onClick={clearFilters}>
             Limpiar filtros
+          </button>
+        )}
+        {status === "sin-stock" && filtered.length > 0 && (
+          <button
+            className="adm-btn danger small adm-results-action"
+            onClick={deactivateFiltered}
+            disabled={deactivating}
+          >
+            {deactivating ? "Desactivando..." : `Desactivar los ${filtered.length.toLocaleString("es-AR")}`}
           </button>
         )}
       </div>

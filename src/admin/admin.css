@@ -303,6 +303,7 @@
   margin-bottom: 10px; font-size: 13px; color: var(--text-2);
 }
 .adm-results-bar strong { color: var(--text); }
+.adm-results-bar .adm-results-action { margin-left: auto; }
 
 .adm-bulk {
   display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
