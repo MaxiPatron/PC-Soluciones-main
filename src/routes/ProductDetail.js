@@ -1,62 +1,63 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { FaCartPlus, FaCheck, FaWhatsapp, FaChevronRight, FaShieldAlt, FaTools, FaComments } from "react-icons/fa";
 import { supabase } from "../utils/supabaseClient";
 import NavBar from "../components/NavBar";
+import Footer from "../components/Footer";
 import "../components/ProductDetail.css";
 import { useCart } from "../components/CartContext";
-const brandImages = {
-  Intel: "/brands/intel.jpeg",
-  AMD: "/brands/amd.jpg",
-  NVIDIA: "/brands/nvidia.png",
-  Kingston: "/brands/Kingston.jpg",
-  Corsair: "/brands/corsair.jpg",
-  ADATA: "/brands/adata.jpg",
-  XPG: "/brands/xpg.jpg",
-  ASUS: "/brands/asus.jpg",
-  MSI: "/brands/msi.jpg",
-  Gigabyte: "/brands/gigabyte.jpg",
-  Biostar: "/brands/biostar.jpg",
-  "Cooler Master": "/brands/coolermaster.jpg",
-  Thermaltake: "/brands/thermaltake.jpg",
-  Gamemax: "/brands/gamemax.jpg",
-  Lexar: "/brands/lexar.jpg",
-  Lenovo: "/brands/lenovo.jpg",
-  Microsoft: "/brands/microsoft.jpg",
-  Dahua: "/brands/dahua.jpg",
-  Hikvision: "/brands/hikvision.jpg",
-  Hiksemi: "/brands/hiksemi.jpg",
-  Memox: "/brands/memox.jpg",
-  HP: "/brands/hp.jpg",
-  HPE: "/brands/hpe.jpg",
-  Dell: "/brands/dell.jpg",
-  Acer: "/brands/acer.jpg",
-  Samsung: "/brands/samsung.jpg",
-  Philips: "/brands/philips.jpg",
-  Noblex: "/brands/noblex.jpg",
-  Sandisk: "/brands/sandisk.jpg",
-  "Western Digital": "/brands/westerndigital.jpg",
-};
+import {
+  FALLBACK_IMAGE,
+  hasPrice,
+  priceLabel,
+  productImage,
+  productWhatsappText,
+  whatsappLink,
+} from "../utils/store";
 
 function ProductDetail() {
   const { slug } = useParams();
   const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
+  const [related, setRelated] = useState([]);
   const [loading, setLoading] = useState(true);
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    let cancelled = false;
+    setLoading(true);
+    window.scrollTo(0, 0);
+
+    (async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, categories(name)")
+        .select("*, categories(name, slug)")
         .eq("slug", slug)
         .single();
 
-      if (!error) setProduct(data);
+      if (cancelled) return;
+      const prod = error ? null : data;
+      setProduct(prod);
       setLoading(false);
-    };
 
-    fetchProduct();
+      if (prod?.category_id) {
+        const { data: rel } = await supabase
+          .from("products")
+          .select("id, name, slug, brand, price, image_url, stock")
+          .eq("category_id", prod.category_id)
+          .eq("active", true)
+          .gt("stock", 0)
+          .neq("id", prod.id)
+          .limit(4);
+        if (!cancelled) setRelated(rel || []);
+      } else {
+        setRelated([]);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [slug]);
 
   if (loading) {
@@ -64,7 +65,16 @@ function ProductDetail() {
       <>
         <NavBar />
         <main className="product-detail-page">
-          <p>Cargando producto...</p>
+          <section className="product-detail-card">
+            <div className="skeleton" style={{ minHeight: 420, borderRadius: 24 }} />
+            <div>
+              <div className="skeleton" style={{ height: 14, width: 120 }} />
+              <div className="skeleton" style={{ height: 40, marginTop: 20 }} />
+              <div className="skeleton" style={{ height: 40, width: "70%", marginTop: 10 }} />
+              <div className="skeleton" style={{ height: 50, width: 200, marginTop: 40 }} />
+              <div className="skeleton" style={{ height: 90, marginTop: 30 }} />
+            </div>
+          </section>
         </main>
       </>
     );
@@ -74,85 +84,122 @@ function ProductDetail() {
     return (
       <>
         <NavBar />
-        <main className="product-detail-page">
+        <main className="product-detail-page not-found">
           <h1>Producto no encontrado</h1>
-          <Link to="/productos">Volver al catálogo</Link>
+          <p>Puede que ya no esté disponible.</p>
+          <Link to="/productos" className="detail-cart-btn">Volver al catálogo</Link>
         </main>
+        <Footer />
       </>
     );
   }
+
   const handleAddToCart = () => {
     addToCart(product);
     setAdded(true);
-
-    setTimeout(() => {
-      setAdded(false);
-    }, 1200);
+    setTimeout(() => setAdded(false), 1400);
   };
 
-  const image =
-    product.image_url?.trim() ||
-    brandImages[product.brand] ||
-    "/brands/default.jpg";
+  const inStock = product.stock > 0;
 
   return (
     <>
       <NavBar />
 
       <main className="product-detail-page">
-        <Link to="/productos" className="back-link">
-          ← Volver al catálogo
-        </Link>
+        <nav className="breadcrumb" aria-label="Ruta">
+          <Link to="/productos">Productos</Link>
+          {product.categories && (
+            <>
+              <FaChevronRight />
+              <Link to={`/productos?categoria=${product.categories.slug}`}>{product.categories.name}</Link>
+            </>
+          )}
+          <FaChevronRight />
+          <span>{product.name}</span>
+        </nav>
 
         <section className="product-detail-card">
           <div className="product-detail-image">
-            <img src={image} alt={product.name} />
+            <img
+              src={productImage(product)}
+              alt={product.name}
+              onError={(e) => {
+                if (!e.currentTarget.src.endsWith(FALLBACK_IMAGE)) e.currentTarget.src = FALLBACK_IMAGE;
+              }}
+            />
           </div>
 
           <div className="product-detail-info">
-            <span className="detail-category">
-              {product.categories?.name || "Producto"}
-            </span>
+            <div className="detail-top">
+              {product.brand && (
+                <Link to={`/productos?brand=${encodeURIComponent(product.brand)}`} className="detail-brand">
+                  {product.brand}
+                </Link>
+              )}
+              <span className={`stock ${inStock ? "ok" : "no"}`}>{inStock ? "En stock" : "Agotado"}</span>
+            </div>
 
             <h1>{product.name}</h1>
 
-            <p className="detail-brand">{product.brand}</p>
+            <p className="detail-sku">SKU: {product.sku || "—"}</p>
 
-            <p className="product-price">
-              Consultar precio
-            </p>
-
-            <div className="detail-meta">
-              <span>{product.stock > 0 ? "En stock" : "Agotado"}</span>
-              <span>SKU: {product.sku || "Sin SKU"}</span>
+            <div className="detail-price-box">
+              <p className={`detail-price ${hasPrice(product) ? "" : "ask"}`}>{priceLabel(product)}</p>
+              {hasPrice(product) && (
+                <span>Precio sujeto a cambios según cotización. Confirmalo por WhatsApp.</span>
+              )}
             </div>
 
-            <p className="detail-description">
-              {product.description || "Producto disponible para consulta."}
-            </p>
-
             <div className="detail-actions">
-              <button
-                className={`detail-cart-btn ${added ? "added" : ""}`}
-                onClick={handleAddToCart}
-              >
-                {added ? "Agregado ✓" : "Agregar al carrito"}
+              <button className={`detail-cart-btn ${added ? "added" : ""}`} onClick={handleAddToCart}>
+                {added ? <><FaCheck /> Agregado</> : <><FaCartPlus /> Agregar al carrito</>}
               </button>
 
               <a
                 className="detail-whatsapp-btn"
-                href={`https://wa.me/5493513256553?text=${encodeURIComponent(
-                  `Hola! Quiero consultar por este producto: ${product.name} - SKU: ${product.sku || "Sin SKU"}`
-                )}`}
+                href={whatsappLink(productWhatsappText(product))}
                 target="_blank"
                 rel="noreferrer"
               >
-                Consultar WhatsApp
+                <FaWhatsapp /> Consultar
               </a>
             </div>
+
+            <div className="detail-description">
+              <h2>Descripción</h2>
+              <p>{product.description || "Producto disponible para consulta."}</p>
+            </div>
+
+            <ul className="detail-perks">
+              <li><FaComments /> Asesoramiento personalizado</li>
+              <li><FaTools /> Armado y mantenimiento de equipos</li>
+              <li><FaShieldAlt /> Atención directa por WhatsApp</li>
+            </ul>
           </div>
         </section>
+
+        {related.length > 0 && (
+          <section className="related">
+            <h2>
+              También te puede <span className="text-accent">interesar</span>
+            </h2>
+            <div className="related-grid">
+              {related.map((p) => (
+                <Link key={p.id} to={`/producto/${p.slug}`} className="related-card">
+                  <div className="related-img">
+                    <img src={productImage(p)} alt={p.name} loading="lazy" />
+                  </div>
+                  <span className="related-brand">{p.brand}</span>
+                  <h3>{p.name}</h3>
+                  <p className={hasPrice(p) ? "" : "ask"}>{priceLabel(p)}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
+      <Footer />
     </>
   );
 }

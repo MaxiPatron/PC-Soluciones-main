@@ -21,3 +21,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Claves de scripts y datos del mayorista (no publicar)
+.env
+.env.scripts
+impresoras.xml
+*.xlsx

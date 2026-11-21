@@ -6,8 +6,15 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./ImageCarousel.css";
 
+// Fotos propias por si Unsplash falla o tarda
+const LOCAL_IMAGES = ["/grafica.jpg", "/mother.jpg", "/Micro.jpg", "/Gabinete.jpg"].map((src) => ({
+  id: src,
+  urls: { regular: src },
+  alt_description: "Hardware de PC",
+}));
+
 const ImageCarousel = () => {
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState(LOCAL_IMAGES);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -23,7 +30,7 @@ const ImageCarousel = () => {
           }
         );
 
-        setImages(response.data);
+        if (Array.isArray(response.data) && response.data.length) setImages(response.data);
       } catch (error) {
         console.error("Error fetching images:", error);
       }

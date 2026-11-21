@@ -11,7 +11,6 @@ export default function useIsAdmin() {
         data: { user },
       } = await supabase.auth.getUser();
 
-      console.log("🔎 Usuario actual:", user);
 
       if (user) {
         const { data, error } = await supabase

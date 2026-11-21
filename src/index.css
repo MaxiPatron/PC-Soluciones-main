@@ -1,49 +1,82 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
 
-*{
-  box-sizing: border-box ;
-  margin: 0 ;
-  padding: 0 ;
+/* =========================================================
+   Paleta PC Soluciones — morado + negro
+   Usá estas variables en vez de repetir los hex.
+   ========================================================= */
+:root {
+  --c-bg: #050505;
+  --c-bg-2: #0b0b0e;
+  --c-surface: #111114;
+  --c-surface-2: #18181d;
+  --c-border: #24242b;
+  --c-border-accent: rgba(208, 0, 255, 0.35);
+
+  --c-text: #ffffff;
+  --c-text-2: #c4c4cc;
+  --c-text-3: #8a8a96;
+
+  --c-purple: #d000ff;
+  --c-purple-2: #8a00ff;
+  --c-purple-soft: rgba(208, 0, 255, 0.12);
+  --c-grad: linear-gradient(135deg, #8a00ff, #d000ff);
+  --c-glow: 0 0 28px rgba(208, 0, 255, 0.22);
+
+  --c-ok: #00e08a;
+  --c-danger: #ff4d5e;
+
+  --radius: 16px;
+  --radius-lg: 24px;
+  --nav-h: 84px;
+  --page-x: clamp(16px, 6vw, 96px);
+}
+
+/* En celular el navbar suma una fila para el buscador */
+@media (max-width: 760px) {
+  :root {
+    --nav-h: 120px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
-  scroll-behavior: smooth ;
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--nav-h);
 }
 
-body{
-  font-family: "Josefin Sans" ;
-  background-color: #000 ;
+body {
+  font-family: "Josefin Sans", system-ui, sans-serif;
+  background-color: var(--c-bg);
+  color: var(--c-text);
+  -webkit-font-smoothing: antialiased;
 }
 
-h1, h4, p, a{
-  color: #fff ;
-  text-decoration: none ;
+h1, h4, p, a {
+  color: #fff;
+  text-decoration: none;
 }
 
-ul{
-  list-style-type: none ;
+ul {
+  list-style-type: none;
 }
 
-.btn {
-  padding: 12px 32px ;
-  font-size: 1rem ;
-  text-transform: uppercase ;
-  background: rgb(15, 135, 248) ;
-  color: #222 ;
-  border: 2px solid #101364 ;
-  font-weight: 600 ;
-  cursor: pointer ;
+img {
+  max-width: 100%;
 }
 
-.btn-light {
-  background: transparent ;
-  color: #fff ;
+::selection {
+  background: rgba(208, 0, 255, 0.45);
+  color: #fff;
 }
 
-.btn:hover {
-  background: rgba(255, 255, 255, 0.2) ;
-  color: #fff ;
-  transition: 0.3s ;
+:focus-visible {
+  outline: 2px solid var(--c-purple);
+  outline-offset: 3px;
 }
 
 ::-webkit-scrollbar {
@@ -51,7 +84,7 @@ ul{
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cc00ff;
+  background: var(--c-grad);
   border-radius: 4px;
 }
 
@@ -59,59 +92,105 @@ ul{
   background: #000;
 }
 
-.home-about-section {
-  position: relative ;
-  padding-bottom: 70px ;
-  padding-top: 70px ;
+/* ---------- Encabezado de sección reutilizable ---------- */
+.section-eyebrow {
+  display: inline-block;
+  color: var(--c-purple);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
 }
 
-.home-about-description {
-  color: white ;
-  padding-top: 100px ;
-  padding-bottom: 20px ;
-  text-align: center ;
+.text-accent {
+  color: var(--c-purple);
 }
 
-.home-about-body {
-  padding-top: 50px ;
-  font-size: 1.2em ;
-  text-align: left ;
+/* ---------- Preloader ---------- */
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: var(--c-bg);
+  transition: opacity 0.35s ease, visibility 0.35s ease;
 }
 
-.home-about-social {
-  text-align: center ;
-  color: white ;
+#preloader::after {
+  content: "";
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 3px solid rgba(208, 0, 255, 0.18);
+  border-top-color: var(--c-purple);
+  animation: spin 0.8s linear infinite;
+  box-shadow: var(--c-glow);
 }
 
-.home-about-social-links {
-  justify-content: center ;
-  padding-top: 15px ;
-  display: inline-block ;
-  position: relative ;
-  padding-inline-start: 0 ;
+#preloader-none {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
-.home-social-icons {
-  position: relative ;
-  display: inline-block ;
-  width: 40px ;
-  height: 40px ;
-  text-align: center ;
-  font-size: 1.2em ;
-  line-height: 3rem ;
-  background: rgba(221, 15, 248, 0.9) ;
-  border-radius: 50% ;
-  transition: 0.5s ;
+#no-scroll {
+  height: 100vh;
+  overflow: hidden;
 }
 
-.home-social-icons:hover {
-  background: rgba(119, 0, 255, 0.2) ; 
-  transform: scale(1.1) ; 
-  transition: 0.3s ;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.social-icons {
-  display: inline-block ;
-  padding-right: 15px ;
-  padding-left: 15px ;
+/* ---------- Skeleton de carga ---------- */
+.skeleton {
+  background: linear-gradient(90deg, #121216 0%, #1c1c22 50%, #121216 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s ease-in-out infinite;
+  border-radius: 10px;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* ---------- Botón flotante de WhatsApp ---------- */
+.wa-float {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 50;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--c-grad);
+  color: #fff;
+  font-size: 1.7rem;
+  box-shadow: 0 8px 24px rgba(138, 0, 255, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wa-float:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 32px rgba(208, 0, 255, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

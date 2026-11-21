@@ -3,7 +3,9 @@ import "./index.css";
 import Home from "./routes/Home";
 import ProductsPage from "./routes/ProductsPage";
 import Scroll from "./components/Scroll";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { FaWhatsapp } from "react-icons/fa";
+import { whatsappLink } from "./utils/store";
 import Preloader from "../src/components/PreLoader";
 import Login from "./routes/Login";
 import Profile from "./routes/Profile";
@@ -17,10 +19,12 @@ import CartPage from "./routes/CartPage";
 import BuildPcPage from "./routes/BuildPcPage";
 function App() {
   const [load, upadateLoad] = useState(true);
+  const { pathname } = useLocation();
+  const isAdmin = pathname.toLowerCase().startsWith("/productsform");
   useEffect(() => {
     const timer = setTimeout(() => {
       upadateLoad(false);
-    }, 1200);
+    }, 600);
     return () => clearTimeout(timer);
   }, []);
 
@@ -48,6 +52,17 @@ function App() {
             <Route path="/carrito" element={<CartPage />} />
             <Route path="/armar-pc" element={<BuildPcPage />} />
           </Routes>
+          {!isAdmin && (
+            <a
+              className="wa-float"
+              href={whatsappLink("Hola! Quería hacer una consulta.")}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Escribinos por WhatsApp"
+            >
+              <FaWhatsapp />
+            </a>
+          )}
         </AuthProvider>
       </CartProvider>
     </div>

@@ -1,325 +1,639 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import {
+  BsCpu,
+  BsMotherboard,
+  BsMemory,
+  BsGpuCard,
+  BsDeviceSsd,
+  BsLightningCharge,
+  BsPc,
+} from "react-icons/bs";
+import {
+  FaCheck,
+  FaCheckCircle,
+  FaChevronLeft,
+  FaChevronRight,
+  FaExclamationTriangle,
+  FaInfoCircle,
+  FaLink,
+  FaSearch,
+  FaShoppingCart,
+  FaTimes,
+  FaTimesCircle,
+  FaUndo,
+  FaWhatsapp,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
 import { supabase } from "../utils/supabaseClient";
 import NavBar from "../components/NavBar";
+import Footer from "../components/Footer";
+import { useCart } from "../components/CartContext";
 import "../components/BuildPcPage.css";
 import { sortBuildProducts } from "../utils/sortBuildProducts";
+import { productImage, whatsappLink } from "../utils/store";
 import {
-    getCpuSocket,
-    getMotherSocket,
-    getRamType,
-    getMotherRamType,
-    getPsuWatts,
-    getRequiredWatts,
+  checkBuild,
+  checkProductForStep,
+  cpuHasIntegratedGraphics,
+  getCasePsuWatts,
+  getPowerBreakdown,
+  getProductTags,
+  getRequiredWatts,
+  isDesktopPsu,
+  isDesktopRam,
 } from "../utils/compatibility";
-const steps = [
-    { key: "cpu", title: "Procesador", slugs: ["microprocesadores"] },
-    { key: "mother", title: "Motherboard", slugs: ["motherboards"] },
-    { key: "ram", title: "Memoria RAM", slugs: ["memoria-ram"] },
-    { key: "gpu", title: "Placa de video", slugs: ["tarjetas-graficas"] },
-    { key: "storage", title: "Almacenamiento", slugs: ["almacenamiento"] },
-    { key: "psu", title: "Fuente", slugs: ["fuentes"] },
-    { key: "case", title: "Gabinete", slugs: ["gabinetes"] },
+
+const STEPS = [
+  { key: "cpu", title: "Procesador", short: "CPU", icon: BsCpu, slugs: ["microprocesadores"] },
+  { key: "mother", title: "Motherboard", short: "Mother", icon: BsMotherboard, slugs: ["motherboards"] },
+  { key: "ram", title: "Memoria RAM", short: "RAM", icon: BsMemory, slugs: ["memoria-ram"] },
+  { key: "gpu", title: "Placa de video", short: "GPU", icon: BsGpuCard, slugs: ["tarjetas-graficas"] },
+  { key: "storage", title: "Almacenamiento", short: "Disco", icon: BsDeviceSsd, slugs: ["almacenamiento"] },
+  { key: "psu", title: "Fuente", short: "Fuente", icon: BsLightningCharge, slugs: ["fuentes"] },
+  { key: "case", title: "Gabinete", short: "Gabinete", icon: BsPc, slugs: ["gabinetes"] },
 ];
 
-const brandImages = {
-    Intel: "/brands/intel.jpeg",
-    AMD: "/brands/amd.jpg",
-    NVIDIA: "/brands/nvidia.png",
-    Kingston: "/brands/Kingston.jpg",
-    ADATA: "/brands/adata.jpg",
-    XPG: "/brands/xpg.jpg",
-    ASUS: "/brands/asus.jpg",
-    MSI: "/brands/msi.jpg",
-    Gigabyte: "/brands/gigabyte.jpg",
-    Memox: "/brands/memox.jpg",
-    "Western Digital": "/brands/westerndigital.jpg",
+// Productos que no tienen sentido en un armado de escritorio
+const BASE_FILTERS = {
+  ram: isDesktopRam,
+  psu: isDesktopPsu,
 };
 
-const getProductImage = (product) =>
-    product.image_url?.trim() ||
-    brandImages[product.brand] ||
-    "/brands/hardwaregen.png";
+const STORAGE_KEY = "build-pc";
+
+const loadSaved = () => {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || null;
+  } catch {
+    return null;
+  }
+};
+
+// ?armado=cpu.12-mother.34-ram.56x2
+const encodeBuild = (selected, ramQty) =>
+  STEPS.filter((s) => selected[s.key])
+    .map((s) => `${s.key}.${selected[s.key].id}${s.key === "ram" && ramQty > 1 ? `x${ramQty}` : ""}`)
+    .join("-");
+
+const decodeBuild = (str) => {
+  const ids = {};
+  let ramQty = 1;
+  (str || "").split("-").forEach((part) => {
+    const m = part.match(/^(\w+)\.(\d+)(?:x(\d))?$/);
+    if (!m) return;
+    ids[m[1]] = Number(m[2]);
+    if (m[1] === "ram" && m[3]) ramQty = Number(m[3]);
+  });
+  return { ids, ramQty };
+};
 
 const BuildPcPage = () => {
-    const [products, setProducts] = useState([]);
-    const [selected, setSelected] = useState({});
-    const [activeStep, setActiveStep] = useState("cpu");
-    const [search, setSearch] = useState("");
-    const [ramQuantity, setRamQuantity] = useState(1);
-    const [sortOrder, setSortOrder] = useState("asc");
-    useEffect(() => {
-        const fetchProducts = async () => {
-            const { data, error } = await supabase
-                .from("products")
-                .select(`
-          *,
-          categories (
-            name,
-            slug
-          )
-        `)
-                .eq("active", true)
-                .gt("stock", 0);
+  const { addToCart } = useCart();
+  const [params, setParams] = useSearchParams();
+  const saved = useRef(loadSaved());
 
-            if (error) {
-                console.error("Error cargando productos:", error);
-                return;
-            }
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState(saved.current?.selected || {});
+  const [ramQuantity, setRamQuantity] = useState(saved.current?.ramQuantity || 1);
+  const [skipped, setSkipped] = useState(saved.current?.skipped || {});
+  const [activeStep, setActiveStep] = useState("cpu");
+  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [showIncompatible, setShowIncompatible] = useState(false);
+  const [notice, setNotice] = useState(null);
+  const mainRef = useRef(null);
 
-            setProducts(data || []);
-        };
+  /* ---------- Carga ---------- */
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("products")
+        .select("id, name, slug, brand, sku, image_url, stock, featured, categories(name, slug)")
+        .eq("active", true)
+        .gt("stock", 0);
 
-        fetchProducts();
-    }, []);
+      if (error) {
+        console.error("Error cargando productos:", error);
+        setLoading(false);
+        return;
+      }
+      const list = data || [];
+      setProducts(list);
 
-    const currentStep = steps.find((step) => step.key === activeStep);
+      const byId = new Map(list.map((p) => [p.id, p]));
+      const fromUrl = params.get("armado");
 
-    const getProductsByStep = (step) => {
-        let list = products.filter((product) =>
-            step.slugs.includes(product.categories?.slug)
-        );
+      if (fromUrl) {
+        // Armado compartido por link
+        const { ids, ramQty } = decodeBuild(fromUrl);
+        const next = {};
+        Object.entries(ids).forEach(([k, id]) => byId.has(id) && (next[k] = byId.get(id)));
+        setSelected(next);
+        setRamQuantity(ramQty);
+        setSkipped({});
+        const firstMissing = STEPS.find((s) => !next[s.key]);
+        setActiveStep(firstMissing?.key || "case");
+      } else {
+        // Armado guardado: refrescar datos y sacar lo que ya no hay en stock
+        const prev = saved.current?.selected || {};
+        const next = {};
+        Object.entries(prev).forEach(([k, p]) => p && byId.has(p.id) && (next[k] = byId.get(p.id)));
+        setSelected(next);
+        const firstMissing = STEPS.find((s) => !next[s.key]);
+        setActiveStep(firstMissing?.key || "case");
+      }
+      setLoading(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-        if (step.key === "mother" && selected.cpu) {
-            const cpuSocket = getCpuSocket(selected.cpu);
+  // Guardar en el navegador
+  useEffect(() => {
+    if (loading) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ selected, ramQuantity, skipped }));
+    } catch {
+      // sin almacenamiento disponible
+    }
+  }, [selected, ramQuantity, skipped, loading]);
 
-            if (cpuSocket) {
-                list = list.filter((mother) => {
-                    const motherSocket = getMotherSocket(mother);
-                    return motherSocket === cpuSocket;
-                });
-            }
-        }
+  /* ---------- Pasos ---------- */
+  const currentIndex = STEPS.findIndex((s) => s.key === activeStep);
+  const currentStep = STEPS[currentIndex];
 
-        if (step.key === "ram" && selected.mother) {
-            const motherRamType = getMotherRamType(selected.mother);
+  const isOptional = (key) => {
+    if (key === "gpu") return cpuHasIntegratedGraphics(selected.cpu) !== false;
+    if (key === "psu") return !!getCasePsuWatts(selected.case);
+    return false;
+  };
 
-            if (motherRamType) {
-                list = list.filter((ram) => {
-                    const ramType = getRamType(ram);
-                    return ramType === motherRamType;
-                });
-            }
-        }
+  const isDone = (key) => !!selected[key] || (skipped[key] && isOptional(key));
 
-        if (step.key === "psu" && (selected.cpu || selected.gpu)) {
-            const requiredWatts = getRequiredWatts(selected.cpu, selected.gpu);
+  const goTo = (key) => {
+    setActiveStep(key);
+    setSearch("");
+    setShowIncompatible(false);
+    mainRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
-            list = list.filter((psu) => {
-                const psuWatts = getPsuWatts(psu);
+  const goNext = (fromKey = activeStep) => {
+    const from = STEPS.findIndex((s) => s.key === fromKey);
+    const next = STEPS.slice(from + 1).find((s) => !isDone(s.key)) || STEPS[from + 1];
+    if (next) goTo(next.key);
+  };
 
-                if (!psuWatts) return false;
+  /* ---------- Productos del paso ---------- */
+  const { visibleProducts, hiddenCount, totalInStep } = useMemo(() => {
+    if (!currentStep) return { visibleProducts: [], hiddenCount: 0, totalInStep: 0 };
+    const q = search.trim().toLowerCase();
+    const base = BASE_FILTERS[currentStep.key];
 
-                return psuWatts >= requiredWatts;
-            });
-        }
+    const inStep = products
+      .filter((p) => currentStep.slugs.includes(p.categories?.slug))
+      .filter((p) => !base || base(p));
 
-        list = list.filter((product) =>
-            product.name.toLowerCase().includes(search.toLowerCase()) ||
-            product.brand?.toLowerCase().includes(search.toLowerCase()) ||
-            product.sku?.toLowerCase().includes(search.toLowerCase())
-        );
+    const withCheck = inStep
+      .filter(
+        (p) => !q || [p.name, p.brand, p.sku].some((v) => String(v || "").toLowerCase().includes(q))
+      )
+      .map((p) => ({ product: p, check: checkProductForStep(currentStep.key, p, selected) }));
 
-        return sortBuildProducts(list, step.key, sortOrder);
+    const compatible = withCheck.filter((x) => x.check.ok !== false);
+    const incompatible = withCheck.filter((x) => x.check.ok === false);
+
+    const sortList = (list) => {
+      const sorted = sortBuildProducts(list.map((x) => x.product), currentStep.key, sortOrder);
+      const map = new Map(list.map((x) => [x.product.id, x]));
+      return sorted.map((p) => map.get(p.id));
     };
 
-    const handleSelect = (stepKey, product) => {
-        if (stepKey === "ram") {
-            if (selected.ram?.id === product.id) {
-                setSelected((prev) => {
-                    const copy = { ...prev };
-                    delete copy.ram;
-                    return copy;
-                });
+    return {
+      visibleProducts: [...sortList(compatible), ...(showIncompatible ? sortList(incompatible) : [])],
+      hiddenCount: incompatible.length,
+      totalInStep: inStep.length,
+    };
+  }, [products, currentStep, search, selected, sortOrder, showIncompatible]);
 
-                setRamQuantity(1);
-                return;
-            }
+  /* ---------- Selección ---------- */
+  const handleSelect = (product) => {
+    const key = activeStep;
+    if (selected[key]?.id === product.id) {
+      removeStep(key);
+      return;
+    }
+    const next = { ...selected, [key]: product };
+    setSelected(next);
+    setSkipped((s) => ({ ...s, [key]: false }));
+    if (key === "ram") setRamQuantity((q) => q || 1);
 
-            setSelected((prev) => ({
-                ...prev,
-                ram: product,
-            }));
+    // Avisar si lo elegido rompe algo que ya estaba elegido
+    const problems = checkBuild(next).filter((x) => x.level === "error");
+    setNotice(problems.length ? problems[0].text : null);
 
-            const currentIndex = steps.findIndex(
-                (step) => step.key === stepKey
+    goNext(key);
+  };
+
+  const removeStep = (key) => {
+    setSelected((prev) => {
+      const copy = { ...prev };
+      delete copy[key];
+      return copy;
+    });
+    if (key === "ram") setRamQuantity(1);
+    setNotice(null);
+  };
+
+  const skipStep = () => {
+    setSkipped((s) => ({ ...s, [activeStep]: true }));
+    removeStep(activeStep);
+    goNext();
+  };
+
+  const resetBuild = () => {
+    setSelected({});
+    setSkipped({});
+    setRamQuantity(1);
+    setNotice(null);
+    setParams({});
+    goTo("cpu");
+  };
+
+  /* ---------- Resumen ---------- */
+  const issues = checkBuild(selected);
+  const errors = issues.filter((i) => i.level === "error");
+  const doneCount = STEPS.filter((s) => isDone(s.key)).length;
+  const missing = STEPS.filter((s) => !isDone(s.key));
+  const selectedCount = Object.keys(selected).length;
+  const shareUrl = `${window.location.origin}/armar-pc?armado=${encodeBuild(selected, ramQuantity)}`;
+
+  const whatsappMessage =
+    "Hola! Quiero consultar por este armado:\n\n" +
+    STEPS.filter((s) => selected[s.key])
+      .map((s) => {
+        const item = selected[s.key];
+        const qty = s.key === "ram" && ramQuantity > 1 ? ` x${ramQuantity}` : "";
+        return `• ${s.title}: ${item.name}${qty}\n  SKU: ${item.sku || "Sin SKU"}`;
+      })
+      .join("\n") +
+    (missing.length ? `\n\nMe falta elegir: ${missing.map((s) => s.title).join(", ")}` : "") +
+    (errors.length ? `\n\n⚠ La web marcó: ${errors.map((e) => e.text).join(" ")}` : "") +
+    `\n\nLink del armado: ${shareUrl}`;
+
+  const [cartAdded, setCartAdded] = useState(false);
+  const addAllToCart = () => {
+    STEPS.forEach((s) => {
+      const p = selected[s.key];
+      if (p) addToCart(p, s.key === "ram" ? ramQuantity : 1);
+    });
+    setNotice(null);
+    setCartAdded(true);
+    setTimeout(() => setCartAdded(false), 2000);
+  };
+
+  const [copied, setCopied] = useState(false);
+  const copyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.prompt("Copiá el link de tu armado:", shareUrl);
+    }
+  };
+
+  const needW = getRequiredWatts(selected.cpu, selected.gpu);
+  const stepHint =
+    activeStep === "gpu" && selected.cpu
+      ? cpuHasIntegratedGraphics(selected.cpu) === false
+        ? "Tu procesador no tiene gráficos integrados: vas a necesitar una placa de video."
+        : "Tu procesador tiene gráficos integrados: la placa de video es opcional."
+      : activeStep === "psu" && (selected.cpu || selected.gpu)
+      ? `Para tu armado recomendamos una fuente de ${needW}W o más (${getPowerBreakdown(selected.cpu, selected.gpu).detail}).`
+      : activeStep === "psu" && getCasePsuWatts(selected.case)
+      ? "Tu gabinete ya incluye fuente: este paso es opcional."
+      : activeStep === "ram" && selected.mother
+      ? "Te mostramos solo las memorias compatibles con tu motherboard."
+      : activeStep === "mother" && selected.cpu
+      ? "Te mostramos solo las motherboards compatibles con tu procesador."
+      : null;
+
+  return (
+    <>
+      <NavBar />
+
+      <main className="build-page">
+        <section className="build-hero">
+          <span className="section-eyebrow">Armá tu PC</span>
+          <h1>
+            Elegí tus <span className="text-accent">componentes</span>
+          </h1>
+          <p>
+            Elegí pieza por pieza: te mostramos solo lo compatible con lo que ya elegiste. Cuando termines,
+            mandanos el armado por WhatsApp y te confirmamos disponibilidad y precio.
+          </p>
+        </section>
+
+        {/* ---------- Pasos ---------- */}
+        <nav className="build-stepper" aria-label="Pasos del armado">
+          {STEPS.map((s, i) => {
+            const Icon = s.icon;
+            const done = isDone(s.key);
+            return (
+              <button
+                key={s.key}
+                className={`build-step ${activeStep === s.key ? "active" : ""} ${done ? "done" : ""}`}
+                onClick={() => goTo(s.key)}
+              >
+                <span className="build-step-icon">
+                  {done ? <FaCheck /> : <Icon />}
+                </span>
+                <span className="build-step-text">
+                  <small>Paso {i + 1}</small>
+                  {s.short}
+                </span>
+              </button>
             );
+          })}
+          <div className="build-stepper-bar">
+            <span style={{ width: `${(doneCount / STEPS.length) * 100}%` }} />
+          </div>
+        </nav>
 
-            const nextStep = steps[currentIndex + 1];
+        <section className="build-layout">
+          <div className="build-main" ref={mainRef}>
+            <div className="build-section-header">
+              <div>
+                <span className="build-step-label">
+                  Paso {currentIndex + 1} de {STEPS.length}
+                  {isOptional(activeStep) && <em>Opcional</em>}
+                </span>
+                <h2>{currentStep.title}</h2>
+              </div>
 
-            if (nextStep) {
-                setActiveStep(nextStep.key);
-                setSearch("");
-            }
+              <div className="build-tools">
+                <div className="build-search">
+                  <FaSearch />
+                  <input
+                    type="search"
+                    placeholder={`Buscar ${currentStep.title.toLowerCase()}...`}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+                <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} aria-label="Orden">
+                  <option value="asc">Gama: menor a mayor</option>
+                  <option value="desc">Gama: mayor a menor</option>
+                </select>
+              </div>
+            </div>
 
-            return;
-        }
+            {stepHint && (
+              <p className="build-hint">
+                <FaInfoCircle /> {stepHint}
+              </p>
+            )}
 
-        if (selected[stepKey]?.id === product.id) {
-            setSelected((prev) => {
-                const copy = { ...prev };
-                delete copy[stepKey];
-                return copy;
-            });
+            {notice && (
+              <div className="build-notice">
+                <FaExclamationTriangle />
+                <span>{notice}</span>
+                <button onClick={() => setNotice(null)} aria-label="Cerrar">
+                  <FaTimes />
+                </button>
+              </div>
+            )}
 
-            return;
-        }
-
-        setSelected((prev) => ({
-            ...prev,
-            [stepKey]: product,
-        }));
-
-        const currentIndex = steps.findIndex(
-            (step) => step.key === stepKey
-        );
-
-        const nextStep = steps[currentIndex + 1];
-
-        if (nextStep) {
-            setActiveStep(nextStep.key);
-            setSearch("");
-        }
-    };
-
-    const whatsappText = encodeURIComponent(
-        `Hola! Quiero consultar por este armado:\n\n${steps
-            .filter((step) => selected[step.key])
-            .map((step) => {
-                const item = selected[step.key];
-                if (step.key === "ram") {
-                    return `${step.title}: ${item.name} x${ramQuantity} - SKU: ${item.sku || "Sin SKU"}`;
-                }
-                return `${step.title}: ${item.name} - SKU: ${item.sku || "Sin SKU"}`;
-            })
-            .join("\n")}`
-    );
-
-    const activeProducts = currentStep ? getProductsByStep(currentStep) : [];
-
-    return (
-        <>
-            <NavBar />
-
-            <main className="build-page">
-                <section className="build-hero">
-                    <span>ARMÁ TU PC</span>
-                    <h1>Elegí tus componentes</h1>
-                    <p>
-                        Seleccioná pieza por pieza y mandanos tu armado para confirmar
-                        disponibilidad, compatibilidad y precio final.
-                    </p>
-                </section>
-
-                <section className="build-layout">
-                    <div className="build-main">
-                        <div className="build-section-header">
-                            <div>
-                                <span>Paso actual</span>
-                                <h2>{currentStep?.title}</h2>
-                            </div>
-                            <button
-                                type="button"
-                                className="build-sort-btn"
-                                onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-                            >
-                                Orden: {sortOrder === "asc" ? "menor a mayor" : "mayor a menor"}
-                            </button>
-                            <input
-                                type="text"
-                                placeholder={`Buscar ${currentStep?.title?.toLowerCase()}...`}
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="build-products-grid">
-                            {activeProducts.map((product) => (
-                                <button
-                                    key={product.id}
-                                    className={
-                                        selected[activeStep]?.id === product.id
-                                            ? "build-product-card active"
-                                            : "build-product-card"
-                                    }
-                                    onClick={() => handleSelect(activeStep, product)}
-                                >
-                                    <img src={getProductImage(product)} alt={product.name} />
-
-                                    <div>
-                                        <span>{product.brand || "Sin marca"}</span>
-                                        <h3>{product.name}</h3>
-                                        <small>SKU: {product.sku || "Sin SKU"}</small>
-                                    </div>
-                                </button>
+            {loading ? (
+              <div className="build-products-grid">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="build-product-card skeleton-card">
+                    <div className="skeleton" style={{ height: 130 }} />
+                    <div className="skeleton" style={{ height: 12, width: "40%", marginTop: 12 }} />
+                    <div className="skeleton" style={{ height: 14, marginTop: 10 }} />
+                    <div className="skeleton" style={{ height: 14, width: "70%", marginTop: 6 }} />
+                  </div>
+                ))}
+              </div>
+            ) : visibleProducts.length === 0 ? (
+              <div className="build-empty">
+                <h3>
+                  {totalInStep === 0
+                    ? `No hay ${currentStep.title.toLowerCase()} en stock ahora`
+                    : search
+                    ? "No hay resultados para tu búsqueda"
+                    : `No hay ${currentStep.title.toLowerCase()} compatibles en stock`}
+                </h3>
+                <p>Consultanos: podemos conseguirlo o sugerirte una alternativa.</p>
+                <div>
+                  {hiddenCount > 0 && (
+                    <button onClick={() => setShowIncompatible(true)}>Ver los {hiddenCount} no compatibles</button>
+                  )}
+                  <a
+                    href={whatsappLink(`Hola! Estoy armando una PC y busco: ${currentStep.title}.`)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <FaWhatsapp /> Consultar
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="build-products-grid">
+                {visibleProducts.map(({ product, check }) => {
+                  const isSelected = selected[activeStep]?.id === product.id;
+                  const tags = getProductTags(activeStep, product);
+                  return (
+                    <div
+                      key={product.id}
+                      className={`build-product-card ${isSelected ? "active" : ""} ${check.ok === false ? "incompatible" : ""}`}
+                    >
+                      <button className="build-product-select" onClick={() => handleSelect(product)}>
+                        <span className="build-product-img">
+                          <img src={productImage(product)} alt="" loading="lazy" />
+                          {isSelected && (
+                            <span className="build-selected-badge">
+                              <FaCheck /> Elegido
+                            </span>
+                          )}
+                        </span>
+                        <span className="build-product-brand">{product.brand || "Sin marca"}</span>
+                        <span className="build-product-name">{product.name}</span>
+                        {tags.length > 0 && (
+                          <span className="build-tags">
+                            {tags.map((t) => (
+                              <em key={t}>{t}</em>
                             ))}
-                        </div>
+                          </span>
+                        )}
+                        {check.ok === false && (
+                          <span className="build-check bad">
+                            <FaTimesCircle /> {check.reason}
+                          </span>
+                        )}
+                        {check.ok === null && (
+                          <span className="build-check unknown">
+                            <FaInfoCircle /> {check.reason}
+                          </span>
+                        )}
+                      </button>
+                      <Link
+                        to={`/producto/${product.slug}`}
+                        target="_blank"
+                        className="build-product-more"
+                        title="Ver detalle en otra pestaña"
+                      >
+                        Ver detalle <FaExternalLinkAlt />
+                      </Link>
                     </div>
+                  );
+                })}
+              </div>
+            )}
 
-                    <aside className="build-summary">
-                        <h2>Tu armado</h2>
+            {!loading && hiddenCount > 0 && visibleProducts.length > 0 && (
+              <button className="build-toggle-incompatible" onClick={() => setShowIncompatible((v) => !v)}>
+                {showIncompatible
+                  ? "Ocultar los no compatibles"
+                  : `Ocultamos ${hiddenCount} que no son compatibles con tu armado · Ver igual`}
+              </button>
+            )}
 
-                        {steps.map((step) => (
-                            <button
-                                type="button"
-                                className={
-                                    activeStep === step.key
-                                        ? "summary-item active"
-                                        : "summary-item"
-                                }
-                                key={step.key}
-                                onClick={() => {
-                                    setActiveStep(step.key);
-                                    setSearch("");
-                                }}
-                            >
-                                <span>{step.title}</span>
-                                <strong>
-                                    {step.key === "ram"
-                                        ? selected.ram
-                                            ? `${selected.ram.name} (${ramQuantity} módulo${ramQuantity > 1 ? "s" : ""})`
-                                            : "No seleccionado"
-                                        : selected[step.key]?.name || "No seleccionado"}
-                                </strong>
-                                {step.key === "ram" && selected.ram && (
-                                    <div className="ram-selector">
-                                        <button
-                                            type="button"
-                                            className={ramQuantity === 1 ? "active" : ""}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setRamQuantity(1);
-                                            }}
-                                        >
-                                            1 RAM
-                                        </button>
+            <div className="build-step-nav">
+              <button disabled={currentIndex === 0} onClick={() => goTo(STEPS[currentIndex - 1].key)}>
+                <FaChevronLeft /> Anterior
+              </button>
+              {isOptional(activeStep) && !selected[activeStep] && (
+                <button className="ghost" onClick={skipStep}>
+                  No lo necesito
+                </button>
+              )}
+              {currentIndex < STEPS.length - 1 && (
+                <button className="next" onClick={() => goTo(STEPS[currentIndex + 1].key)}>
+                  Siguiente <FaChevronRight />
+                </button>
+              )}
+            </div>
+          </div>
 
-                                        <button
-                                            type="button"
-                                            className={ramQuantity === 2 ? "active" : ""}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setRamQuantity(2);
-                                            }}
-                                        >
-                                            2 RAM
-                                        </button>
-                                    </div>
-                                )}
-                            </button>
+          {/* ---------- Resumen ---------- */}
+          <aside className="build-summary" id="build-summary">
+            <div className="build-summary-head">
+              <h2>Tu armado</h2>
+              <span>
+                {doneCount}/{STEPS.length}
+              </span>
+            </div>
+            <div className="build-progress">
+              <span style={{ width: `${(doneCount / STEPS.length) * 100}%` }} />
+            </div>
+
+            <ul className="summary-list">
+              {STEPS.map((s) => {
+                const Icon = s.icon;
+                const item = selected[s.key];
+                const skippedHere = skipped[s.key] && isOptional(s.key) && !item;
+                return (
+                  <li key={s.key} className={`summary-item ${activeStep === s.key ? "active" : ""}`}>
+                    <button className="summary-main" onClick={() => goTo(s.key)}>
+                      <span className="summary-thumb">
+                        {item ? <img src={productImage(item)} alt="" /> : <Icon />}
+                      </span>
+                      <span className="summary-text">
+                        <small>{s.title}</small>
+                        <strong className={item ? "" : "empty"}>
+                          {item ? item.name : skippedHere ? "No necesito" : "Elegir"}
+                        </strong>
+                      </span>
+                    </button>
+                    {item && (
+                      <button className="summary-remove" onClick={() => removeStep(s.key)} aria-label={`Quitar ${s.title}`}>
+                        <FaTimes />
+                      </button>
+                    )}
+                    {s.key === "ram" && item && (
+                      <div className="ram-selector">
+                        <span>Módulos:</span>
+                        {[1, 2, 4].map((n) => (
+                          <button
+                            key={n}
+                            className={ramQuantity === n ? "active" : ""}
+                            onClick={() => setRamQuantity(n)}
+                          >
+                            {n}
+                          </button>
                         ))}
-                        <a
-                            className="build-whatsapp"
-                            href={`https://wa.me/5493513256553?text=${whatsappText}`}
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            Consultar armado
-                        </a>
-                    </aside>
-                </section>
-            </main>
-        </>
-    );
+                      </div>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+
+            {issues.length > 0 && (
+              <ul className="build-issues">
+                {issues.map((i) => (
+                  <li key={i.text} className={i.level}>
+                    {i.level === "error" ? (
+                      <FaTimesCircle />
+                    ) : i.level === "warning" ? (
+                      <FaExclamationTriangle />
+                    ) : (
+                      <FaInfoCircle />
+                    )}
+                    <span>{i.text}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {selectedCount > 0 && errors.length === 0 && missing.length === 0 && (
+              <p className="build-ok">
+                <FaCheckCircle /> ¡Armado completo y compatible!
+              </p>
+            )}
+
+            <a
+              className={`build-whatsapp ${selectedCount === 0 ? "disabled" : ""}`}
+              href={selectedCount ? whatsappLink(whatsappMessage) : undefined}
+              target="_blank"
+              rel="noreferrer"
+              aria-disabled={selectedCount === 0}
+            >
+              <FaWhatsapp /> Consultar armado
+            </a>
+
+            <div className="build-secondary-actions">
+              <button onClick={addAllToCart} disabled={!selectedCount}>
+                {cartAdded ? <><FaCheck /> Agregado</> : <><FaShoppingCart /> Al carrito</>}
+              </button>
+              <button onClick={copyLink} disabled={!selectedCount}>
+                {copied ? <><FaCheck /> Copiado</> : <><FaLink /> Copiar link</>}
+              </button>
+              <button onClick={resetBuild} disabled={!selectedCount && !Object.values(skipped).some(Boolean)}>
+                <FaUndo /> Reiniciar
+              </button>
+            </div>
+            <p className="build-disclaimer">
+              La compatibilidad se calcula a partir del nombre de cada producto. Antes de confirmar la compra la
+              revisamos con vos por WhatsApp.
+            </p>
+          </aside>
+        </section>
+
+        {/* Barra fija en celular */}
+        <a href="#build-summary" className="build-mobile-bar">
+          <span>
+            Tu armado <strong>{doneCount}/{STEPS.length}</strong>
+            {errors.length > 0 && <em><FaExclamationTriangle /> {errors.length}</em>}
+          </span>
+          <span>Ver resumen</span>
+        </a>
+      </main>
+      <Footer />
+    </>
+  );
 };
 
 export default BuildPcPage;

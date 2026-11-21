@@ -2,15 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./FeaturedBrands.css";
 import { Link } from "react-router-dom";
 import { supabase } from "../utils/supabaseClient";
+import { BRAND_IMAGES, priceLabel, productImage } from "../utils/store";
 
 const brands = ["AMD", "Intel", "Kingston", "NVIDIA"];
-
-const brandImages = {
-  AMD: "/brands/amd.jpg",
-  Intel: "/brands/intel.jpeg",
-  Kingston: "/brands/Kingston.jpg",
-  NVIDIA: "/brands/nvidia.png",
-};
 
 const FeaturedBrands = () => {
   const [selectedBrand, setSelectedBrand] = useState("AMD");
@@ -23,6 +17,8 @@ const FeaturedBrands = () => {
         .select("*")
         .eq("brand", selectedBrand)
         .eq("active", true)
+        .gt("stock", 0)
+        .order("featured", { ascending: false })
         .limit(3);
 
       if (!error) setBrandProducts(data || []);
@@ -57,7 +53,7 @@ const FeaturedBrands = () => {
           to={`/productos?brand=${selectedBrand}`}
           className="brand-banner brand-banner-link"
           style={{
-            backgroundImage: `linear-gradient(to right, rgba(0,0,0,.9), rgba(0,0,0,.45)), url(${brandImages[selectedBrand]})`,
+            backgroundImage: `linear-gradient(to right, rgba(0,0,0,.9), rgba(0,0,0,.45)), url(${BRAND_IMAGES[selectedBrand]})`,
           }}
         >
           <div>
@@ -70,20 +66,14 @@ const FeaturedBrands = () => {
         {brandProducts.map((product) => (
           <article className="brand-product-card" key={product.id}>
             <img
-              src={
-                product.image_url?.trim()
-                  ? product.image_url
-                  : brandImages[product.brand] || "/brands/hardwaregen.png"
-              }
+              src={productImage(product)}
               alt={product.name}
             />
 
             <h4>{product.name}</h4>
 
             <p>
-              {Number(product.price) > 0
-                ? `$${Number(product.price).toLocaleString("es-AR")}`
-                : "Consultar precio"}
+              {priceLabel(product)}
             </p>
 
             <Link

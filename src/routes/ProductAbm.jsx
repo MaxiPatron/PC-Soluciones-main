@@ -1,21 +1,5 @@
-import React from "react";
-import NavBar from "../components/NavBar";
-import ProductsForm from "../components/ProductForm.jsx";
-import CategoriaForm from "../components/CategoriaForm.jsx";
-import UserRoles from "../components/UserRoles";
+import AdminPanel from "../admin/AdminPanel";
 
-const Products = () => {
-  return (
-    <>
-      <NavBar />
+const ProductAbm = () => <AdminPanel />;
 
-      <div className="admin-page">
-        <ProductsForm />
-        <CategoriaForm />
-        <UserRoles />
-      </div>
-    </>
-  );
-};
-
-export default Products;
+export default ProductAbm;

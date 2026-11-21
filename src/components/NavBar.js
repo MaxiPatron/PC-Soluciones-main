@@ -1,25 +1,57 @@
 import "./NavBarStyle.css";
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes, FaSearch } from "react-icons/fa";
-import { Form, FormControl } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { FaBars, FaTimes, FaSearch, FaShoppingCart, FaUserCircle } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import { supabase } from "../utils/supabaseClient";
 import useIsAdmin from "../utils/useIsAdmin";
 import { useCart } from "./CartContext";
+import Logo from "../assets/LogoSinFondoa.png";
+
 const NavBar = ({ isProfile }) => {
-  const [click, setClick] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState(
+    () => new URLSearchParams(location.search).get("search") || ""
+  );
 
   const { user } = useAuth();
   const { isAdmin } = useIsAdmin();
   const { cart } = useCart();
   const cartQuantity = cart.reduce((total, item) => total + item.quantity, 0);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Cerrar el menú al navegar y bloquear el scroll mientras está abierto
+  useEffect(() => setOpen(false), [location.pathname, location.search]);
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchTerm.trim() !== "") {
-      navigate(`/productos?search=${searchTerm}`);
+    const q = searchTerm.trim();
+    navigate(q ? `/productos?search=${encodeURIComponent(q)}` : "/productos");
+  };
+
+  const goToAbout = (e) => {
+    e.preventDefault();
+    setOpen(false);
+    const scroll = () => document.getElementById("about")?.scrollIntoView({ behavior: "smooth" });
+    if (location.pathname === "/") scroll();
+    else {
+      navigate("/");
+      setTimeout(scroll, 350);
     }
   };
 
@@ -29,52 +61,60 @@ const NavBar = ({ isProfile }) => {
   };
 
   return (
-    <div className="header">
-      <Link to="/">
-        <h1>PC Soluciones</h1>
+    <header className={`header ${scrolled || open ? "scrolled" : ""}`}>
+      <Link to="/" className="nav-brand" aria-label="PC Soluciones - inicio">
+        <img src={Logo} alt="" />
+        <span>
+          PC <strong>Soluciones</strong>
+        </span>
       </Link>
 
       {!isProfile && (
-        <div className="search-wrapper">
-          <Form className="search-container" onSubmit={handleSearchSubmit}>
-            <FormControl
-              type="text"
-              placeholder="Buscar productos, marcas y más..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="search-input"
-            />
-            <button className="search-icon" type="submit">
-              <FaSearch />
-            </button>
-          </Form>
-        </div>
+        <form className="search-container" onSubmit={handleSearchSubmit} role="search">
+          <input
+            type="search"
+            placeholder="Buscar productos, marcas y más..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+            aria-label="Buscar productos"
+          />
+          <button className="search-icon" type="submit" aria-label="Buscar">
+            <FaSearch />
+          </button>
+        </form>
       )}
 
-      <div className="fabar" onClick={() => setClick(!click)}>
-        {click ? <FaTimes size={20} color="#fff" /> : <FaBars size={20} color="#fff" />}
+      <div className="nav-quick">
+        <Link to="/carrito" className="nav-cart" aria-label={`Carrito (${cartQuantity})`}>
+          <FaShoppingCart />
+          {cartQuantity > 0 && <span className="cart-badge">{cartQuantity}</span>}
+        </Link>
+        <button
+          className="fabar"
+          onClick={() => setOpen(!open)}
+          aria-label={open ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={open}
+        >
+          {open ? <FaTimes /> : <FaBars />}
+        </button>
       </div>
 
-      <ul className={click ? "navbar active" : "navbar"}>
-        <li><Link to="/">Home</Link></li>
-        <li><Link to="/productos">Productos</Link></li>
-        <li><Link to="/armar-pc">Armá tu PC</Link></li>
-        <li><a href="#about">About We</a></li>
-        <li>
-          <Link to="/carrito" className="cart-nav-link">
-            Carrito
-            {cartQuantity > 0 && (
-              <span className="cart-badge">{cartQuantity}</span>
-            )}
-          </Link>
-        </li>
+      <ul className={open ? "navbar active" : "navbar"}>
+        <li><NavLink to="/" end>Inicio</NavLink></li>
+        <li><NavLink to="/productos">Productos</NavLink></li>
+        <li><NavLink to="/armar-pc">Armá tu PC</NavLink></li>
+        <li><a href="/#about" onClick={goToAbout}>Nosotros</a></li>
         {isAdmin && (
-          <li><Link to="/ProductsForm">Admin</Link></li>
+          <li><NavLink to="/ProductsForm" className="nav-admin">Admin</NavLink></li>
         )}
-
         {user ? (
           <>
-            <li><Link to="/profile">Perfil</Link></li>
+            <li>
+              <NavLink to="/profile" className="nav-icon-link">
+                <FaUserCircle /> Perfil
+              </NavLink>
+            </li>
             <li>
               <button onClick={handleLogout} className="nav-logout">
                 Salir
@@ -82,10 +122,18 @@ const NavBar = ({ isProfile }) => {
             </li>
           </>
         ) : (
-          <li><Link to="/login">Login</Link></li>
+          <li>
+            <NavLink to="/login" className="nav-login">Ingresar</NavLink>
+          </li>
         )}
+        <li className="nav-cart-desktop">
+          <NavLink to="/carrito" className="nav-cart" aria-label={`Carrito (${cartQuantity})`}>
+            <FaShoppingCart />
+            {cartQuantity > 0 && <span className="cart-badge">{cartQuantity}</span>}
+          </NavLink>
+        </li>
       </ul>
-    </div>
+    </header>
   );
 };
 

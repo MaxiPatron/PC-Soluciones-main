@@ -1,12 +1,14 @@
 import React from "react";
-import Background from "../components/Profile.jsx";
+import ProfileContent from "../components/Profile.jsx";
 import NavBar from "../components/NavBar.js";
+import Footer from "../components/Footer.js";
 
 const Profile = () => {
   return (
     <div>
-      <NavBar isProfile={true} />
-      <Background />
+      <NavBar />
+      <ProfileContent />
+      <Footer />
     </div>
   );
 };

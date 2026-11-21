@@ -5,17 +5,16 @@ import useIsAdmin from "../utils/useIsAdmin";
 const AdminRoute = ({ children }) => {
   const { isAdmin, loading } = useIsAdmin();
 
-  console.log("AdminRoute cargado");
-  console.log("isAdmin:", isAdmin, "loading:", loading);
-
-  if (loading) return <div>Cargando...</div>;
-
-  if (!isAdmin) {
-    console.log("No es admin. Redirigiendo...");
-    return <Navigate to="/" />;
+  if (loading) {
+    return (
+      <div style={{ minHeight: "100vh", display: "grid", placeItems: "center", color: "#a4a4b2" }}>
+        Verificando permisos...
+      </div>
+    );
   }
 
-  console.log("Es admin. Mostrando children");
+  if (!isAdmin) return <Navigate to="/" replace />;
+
   return children;
 };
 
