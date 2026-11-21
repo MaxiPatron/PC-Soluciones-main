@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./FeaturedBrands.css";
 import { Link } from "react-router-dom";
 import { supabase } from "../utils/supabaseClient";
-import { BRAND_IMAGES, priceLabel, productImage } from "../utils/store";
+import { BRAND_IMAGES, imgFallback, priceLabel, productImage } from "../utils/store";
 
 const brands = ["AMD", "Intel", "Kingston", "NVIDIA"];
 
@@ -67,6 +67,7 @@ const FeaturedBrands = () => {
           <article className="brand-product-card" key={product.id}>
             <img
               src={productImage(product)}
+              onError={imgFallback}
               alt={product.name}
             />
 

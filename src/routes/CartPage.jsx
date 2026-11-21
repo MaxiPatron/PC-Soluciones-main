@@ -5,7 +5,7 @@ import { FaMinus, FaPlus, FaTrash, FaWhatsapp, FaShoppingCart, FaArrowLeft } fro
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import { useCart } from "../components/CartContext";
-import { SHOW_PRICES, formatPrice, hasPrice, priceLabel, productImage, whatsappLink } from "../utils/store";
+import { SHOW_PRICES, formatPrice, hasPrice, priceLabel, productImage, imgFallback, whatsappLink } from "../utils/store";
 import "./CartPage.css";
 
 const CartPage = () => {
@@ -69,7 +69,7 @@ const CartPage = () => {
               {cart.map((item) => (
                 <article key={item.id} className="cart-card">
                   <Link to={`/producto/${item.slug}`} className="cart-img">
-                    <img src={productImage(item)} alt={item.name} />
+                    <img src={productImage(item)} alt={item.name} onError={imgFallback} />
                   </Link>
 
                   <div className="cart-info">

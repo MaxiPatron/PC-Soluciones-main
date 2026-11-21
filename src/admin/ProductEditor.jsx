@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaMagic, FaTimes } from "react-icons/fa";
+import { FaGoogle, FaMagic, FaTimes } from "react-icons/fa";
+import ImagePicker from "./ImagePicker";
 import { supabase } from "../utils/supabaseClient";
 import { Field, Toggle, useConfirm, useToast } from "./ui";
 import {
@@ -39,6 +40,7 @@ export default function ProductEditor({ initial, products, categories, exchangeR
   const [slugTouched, setSlugTouched] = useState(!isNew || !!initial.__isCopy);
   const [saving, setSaving] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [picking, setPicking] = useState(false);
   const firstInput = useRef(null);
 
   const dirty = JSON.stringify(form) !== JSON.stringify(startForm);
@@ -342,14 +344,29 @@ export default function ProductEditor({ initial, products, categories, exchangeR
                 {!form.image_url && <span>Imagen de la marca</span>}
                 {imgError && <span className="bad">No se pudo cargar la URL</span>}
               </div>
-              <Field label="URL de la imagen" hint="Si la dejás vacía se usa el logo de la marca">
-                <input
-                  value={form.image_url}
-                  onChange={(e) => set("image_url", e.target.value)}
-                  placeholder="https://..."
-                />
-              </Field>
+              <div>
+                <Field label="URL de la imagen" hint="Si la dejás vacía se usa el logo de la marca">
+                  <input
+                    value={form.image_url}
+                    onChange={(e) => set("image_url", e.target.value)}
+                    placeholder="https://..."
+                  />
+                </Field>
+                {!picking && (
+                  <button type="button" className="adm-btn ghost small" onClick={() => setPicking(true)}>
+                    <FaGoogle /> Buscar en Google
+                  </button>
+                )}
+              </div>
             </div>
+            {picking && (
+              <ImagePicker
+                product={{ ...form, sku: form.sku }}
+                current={form.image_url}
+                onPick={(url) => set("image_url", url)}
+                onClose={() => setPicking(false)}
+              />
+            )}
           </section>
 
           <section className="adm-form-section">

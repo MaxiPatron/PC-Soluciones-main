@@ -8,6 +8,8 @@ import {
   FaSignOutAlt,
   FaUsers,
   FaBars,
+  FaFileImport,
+  FaImages,
 } from "react-icons/fa";
 import { supabase } from "../utils/supabaseClient";
 import { useAuth } from "../context/AuthContext";
@@ -16,11 +18,15 @@ import Dashboard from "./Dashboard";
 import ProductsManager from "./ProductsManager";
 import CategoriesManager from "./CategoriesManager";
 import UsersManager from "./UsersManager";
+import SupplierImport from "./SupplierImport.jsx";
+import ImagesManager from "./ImagesManager.jsx";
 import "./admin.css";
 
 const TABS = [
   { key: "dashboard", label: "Resumen", icon: <FaChartPie /> },
   { key: "productos", label: "Productos", icon: <FaBoxOpen /> },
+  { key: "importar", label: "Importar mayorista", icon: <FaFileImport /> },
+  { key: "imagenes", label: "Imágenes", icon: <FaImages /> },
   { key: "categorias", label: "Categorías", icon: <FaLayerGroup /> },
   { key: "usuarios", label: "Usuarios", icon: <FaUsers /> },
 ];
@@ -174,6 +180,8 @@ export default function AdminPanel() {
               <>
                 {tab === "dashboard" && <Dashboard {...shared} />}
                 {tab === "productos" && <ProductsManager {...shared} />}
+                {tab === "importar" && <SupplierImport {...shared} />}
+                {tab === "imagenes" && <ImagesManager {...shared} />}
                 {tab === "categorias" && <CategoriesManager {...shared} />}
                 {tab === "usuarios" && <UsersManager currentUserId={user?.id} />}
               </>

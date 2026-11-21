@@ -61,3 +61,9 @@ export const formatPrice = (value) =>
 export const hasPrice = (p) => SHOW_PRICES && Number(p?.price) > 0;
 
 export const priceLabel = (p) => (hasPrice(p) ? formatPrice(p.price) : "Consultar precio");
+
+/** onError para <img>: si la foto externa no carga, mostrar la genérica */
+export const imgFallback = (e) => {
+  const img = e.currentTarget;
+  if (!img.src.endsWith(FALLBACK_IMAGE)) img.src = FALLBACK_IMAGE;
+};

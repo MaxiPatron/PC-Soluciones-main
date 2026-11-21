@@ -31,6 +31,11 @@ on conflict (id) do nothing;
 -- ---------- Productos: opción de precio fijo ----------
 alter table public.products add column if not exists manual_price boolean not null default false;
 
+-- ---------- Productos: Part Number ----------
+-- El Part Number está en "sku" (es lo que usa la web); lo copiamos a part_number
+update public.products set part_number = sku where part_number is null and sku is not null;
+-- (la corrección de IVA 10 → 10,5 se hace más abajo, cuando ya existe el trigger que recalcula precios)
+
 -- ---------- Helpers ----------
 create or replace function public.is_admin()
 returns boolean
@@ -110,6 +115,7 @@ begin
   if usd is null or usd <= 0 then
     return new;
   end if;
+  new.usd_with_tax := new.cost_price_usd * (1 + coalesce(new.iva, 0) / 100);
   cost := new.cost_price_usd * (1 + coalesce(new.iva, 0) / 100) * usd;
   new.cost_price  := public.round_price(cost);
   new.dollar_used := usd;
@@ -125,6 +131,10 @@ create trigger trg_product_cost_change
 before insert or update of cost_price_usd, iva, manual_price on public.products
 for each row
 execute function public.on_product_cost_change();
+
+-- Corregir IVA 10 → 10,5: el mayorista solo usa 10,5 y 21; el 10 vino de la
+-- planilla de la carga inicial. El trigger recalcula costo y precio de cada uno.
+update public.products set iva = 10.5 where iva = 10;
 
 -- ---------- Traer el dólar de dolarapi.com ----------
 create or replace function public.sync_dollar()

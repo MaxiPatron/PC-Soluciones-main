@@ -8,6 +8,7 @@ import "../components/ProductDetail.css";
 import { useCart } from "../components/CartContext";
 import {
   FALLBACK_IMAGE,
+  imgFallback,
   hasPrice,
   priceLabel,
   productImage,
@@ -188,7 +189,7 @@ function ProductDetail() {
               {related.map((p) => (
                 <Link key={p.id} to={`/producto/${p.slug}`} className="related-card">
                   <div className="related-img">
-                    <img src={productImage(p)} alt={p.name} loading="lazy" />
+                    <img src={productImage(p)} alt={p.name} loading="lazy" onError={imgFallback} />
                   </div>
                   <span className="related-brand">{p.brand}</span>
                   <h3>{p.name}</h3>

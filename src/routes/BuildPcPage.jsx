@@ -31,7 +31,7 @@ import Footer from "../components/Footer";
 import { useCart } from "../components/CartContext";
 import "../components/BuildPcPage.css";
 import { sortBuildProducts } from "../utils/sortBuildProducts";
-import { productImage, whatsappLink } from "../utils/store";
+import { imgFallback, productImage, whatsappLink } from "../utils/store";
 import {
   checkBuild,
   checkProductForStep,
@@ -451,7 +451,7 @@ const BuildPcPage = () => {
                     >
                       <button className="build-product-select" onClick={() => handleSelect(product)}>
                         <span className="build-product-img">
-                          <img src={productImage(product)} alt="" loading="lazy" />
+                          <img src={productImage(product)} alt="" loading="lazy" onError={imgFallback} />
                           {isSelected && (
                             <span className="build-selected-badge">
                               <FaCheck /> Elegido
@@ -538,7 +538,7 @@ const BuildPcPage = () => {
                   <li key={s.key} className={`summary-item ${activeStep === s.key ? "active" : ""}`}>
                     <button className="summary-main" onClick={() => goTo(s.key)}>
                       <span className="summary-thumb">
-                        {item ? <img src={productImage(item)} alt="" /> : <Icon />}
+                        {item ? <img src={productImage(item)} alt="" onError={imgFallback} /> : <Icon />}
                       </span>
                       <span className="summary-text">
                         <small>{s.title}</small>
