@@ -191,9 +191,17 @@ function ProductDetail() {
                   <div className="related-img">
                     <img src={productImage(p)} alt={p.name} loading="lazy" onError={imgFallback} />
                   </div>
-                  <span className="related-brand">{p.brand}</span>
+                  <div className="related-meta">
+                    <span className="related-brand">{p.brand}</span>
+                    {p.stock > 0 && <span className="related-stock">En stock</span>}
+                  </div>
                   <h3>{p.name}</h3>
-                  <p className={hasPrice(p) ? "" : "ask"}>{priceLabel(p)}</p>
+                  <div className="related-foot">
+                    <p className={hasPrice(p) ? "" : "ask"}>{priceLabel(p)}</p>
+                    <span className="related-cta">
+                      Ver <FaChevronRight />
+                    </span>
+                  </div>
                 </Link>
               ))}
             </div>
