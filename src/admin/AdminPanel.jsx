@@ -10,6 +10,7 @@ import {
   FaBars,
   FaFileImport,
   FaImages,
+  FaChartLine,
 } from "react-icons/fa";
 import { supabase } from "../utils/supabaseClient";
 import { useAuth } from "../context/AuthContext";
@@ -20,11 +21,13 @@ import CategoriesManager from "./CategoriesManager";
 import UsersManager from "./UsersManager";
 import SupplierImport from "./SupplierImport.jsx";
 import ImagesManager from "./ImagesManager.jsx";
+import PriceStats from "./PriceStats.jsx";
 import "./admin.css";
 
 const TABS = [
   { key: "dashboard", label: "Resumen", icon: <FaChartPie /> },
   { key: "productos", label: "Productos", icon: <FaBoxOpen /> },
+  { key: "precios", label: "Precios", icon: <FaChartLine /> },
   { key: "importar", label: "Importar mayorista", icon: <FaFileImport /> },
   { key: "imagenes", label: "Imágenes", icon: <FaImages /> },
   { key: "categorias", label: "Categorías", icon: <FaLayerGroup /> },
@@ -180,6 +183,7 @@ export default function AdminPanel() {
               <>
                 {tab === "dashboard" && <Dashboard {...shared} />}
                 {tab === "productos" && <ProductsManager {...shared} />}
+                {tab === "precios" && <PriceStats {...shared} />}
                 {tab === "importar" && <SupplierImport {...shared} />}
                 {tab === "imagenes" && <ImagesManager {...shared} />}
                 {tab === "categorias" && <CategoriesManager {...shared} />}
