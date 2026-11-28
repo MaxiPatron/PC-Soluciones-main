@@ -15,6 +15,7 @@ import {
   productWhatsappText,
   whatsappLink,
   FALLBACK_IMAGE,
+  PRODUCT_COLUMNS,
 } from "../utils/store";
 
 const PAGE_STEP = 24;
@@ -43,7 +44,7 @@ async function fetchActiveProducts() {
   for (;;) {
     const { data, error } = await supabase
       .from("products")
-      .select("*, categories(name, slug)")
+      .select(`${PRODUCT_COLUMNS}, categories(name, slug)`)
       .eq("active", true)
       .order("created_at", { ascending: false })
       .range(from, from + PAGE - 1);

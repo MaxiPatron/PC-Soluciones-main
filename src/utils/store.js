@@ -5,6 +5,12 @@
 // Poné true solo si algún día querés publicar los precios.
 export const SHOW_PRICES = false;
 
+// Columnas de productos que la tienda puede leer (supabase/security.sql).
+// Costos, precio y datos del mayorista solo los ve el admin.
+// Si pasás SHOW_PRICES a true, agregá "price" acá y en security.sql.
+export const PRODUCT_COLUMNS =
+  "id, name, slug, brand, sku, description, image_url, stock, active, featured, category_id, created_at";
+
 export const WHATSAPP_NUMBER = "5493513256553";
 
 export const whatsappLink = (text) =>

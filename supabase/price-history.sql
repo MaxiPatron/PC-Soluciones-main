@@ -17,6 +17,21 @@
 -- cada importación del mayorista.
 -- =====================================================================
 
+-- ---------- ¿Es admin? (para las reglas de seguridad) ----------
+-- Vive en el schema "access", que no se publica en la API: las reglas
+-- (RLS) la pueden usar, pero nadie la puede llamar desde afuera.
+create schema if not exists access;
+grant usage on schema access to anon, authenticated;
+
+create or replace function access.is_admin()
+returns boolean
+language sql stable security definer set search_path = public
+as $$
+  select exists (select 1 from public.profiles where id = auth.uid() and role = 'admin');
+$$;
+revoke all on function access.is_admin() from public;
+grant execute on function access.is_admin() to anon, authenticated;
+
 -- ---------- Tablas ----------
 create table if not exists public.price_history (
   id          bigserial primary key,
@@ -115,11 +130,11 @@ alter table public.dollar_history enable row level security;
 
 drop policy if exists "price_history_admin_read" on public.price_history;
 create policy "price_history_admin_read" on public.price_history
-  for select using (public.is_admin());
+  for select using (access.is_admin());
 
 drop policy if exists "dollar_history_admin_read" on public.dollar_history;
 create policy "dollar_history_admin_read" on public.dollar_history
-  for select using (public.is_admin());
+  for select using (access.is_admin());
 
 -- ---------- Funciones para el admin ----------
 
@@ -127,12 +142,12 @@ create policy "dollar_history_admin_read" on public.dollar_history
 -- p_currency: 'ars' (precio de venta) | 'usd' (costo mayorista)
 create or replace function public.price_changes(p_days integer, p_currency text default 'ars')
 returns table (product_id bigint, start_value numeric, end_value numeric, changes integer)
-language plpgsql stable security definer set search_path = public
+language plpgsql stable security invoker set search_path = public
 as $$
 declare
   since timestamptz := now() - make_interval(days => greatest(p_days, 1));
 begin
-  if not public.is_admin() then raise exception 'No autorizado'; end if;
+  if not access.is_admin() then raise exception 'No autorizado'; end if;
 
   return query
   with h as (   -- historial del producto en la moneda elegida
@@ -163,14 +178,14 @@ create or replace function public.price_index(
   p_days integer, p_currency text default 'ars', p_category bigint default null
 )
 returns table (bucket date, idx numeric, products integer)
-language plpgsql stable security definer set search_path = public
+language plpgsql stable security invoker set search_path = public
 as $$
 #variable_conflict use_column
 declare
   step interval := case when p_days > 120 then interval '7 days' else interval '1 day' end;
   first_day date := (now() - make_interval(days => greatest(p_days, 1)))::date;
 begin
-  if not public.is_admin() then raise exception 'No autorizado'; end if;
+  if not access.is_admin() then raise exception 'No autorizado'; end if;
 
   return query
   with days as (

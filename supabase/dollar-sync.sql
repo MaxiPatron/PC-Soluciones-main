@@ -44,6 +44,21 @@ as $$
   select exists (select 1 from public.profiles where id = auth.uid() and role = 'admin');
 $$;
 
+-- ---------- ¿Es admin? (para las reglas de seguridad) ----------
+-- Vive en el schema "access", que no se publica en la API: las reglas
+-- (RLS) la pueden usar, pero nadie la puede llamar desde afuera.
+create schema if not exists access;
+grant usage on schema access to anon, authenticated;
+
+create or replace function access.is_admin()
+returns boolean
+language sql stable security definer set search_path = public
+as $$
+  select exists (select 1 from public.profiles where id = auth.uid() and role = 'admin');
+$$;
+revoke all on function access.is_admin() from public;
+grant execute on function access.is_admin() to anon, authenticated;
+
 -- Misma fórmula que src/admin/pricing.js
 create or replace function public.round_price(v numeric)
 returns numeric language sql immutable
@@ -199,7 +214,7 @@ create policy "exchange_rates_public_read" on public.exchange_rates
 
 drop policy if exists "exchange_rates_admin_update" on public.exchange_rates;
 create policy "exchange_rates_admin_update" on public.exchange_rates
-  for update using (public.is_admin()) with check (public.is_admin());
+  for update using (access.is_admin()) with check (access.is_admin());
 
 -- ---------- Seguridad: nadie se puede poner "admin" a sí mismo ----------
 -- Solo un admin puede cambiar el rol de un perfil. Un usuario común que

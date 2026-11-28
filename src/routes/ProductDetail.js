@@ -8,6 +8,7 @@ import "../components/ProductDetail.css";
 import { useCart } from "../components/CartContext";
 import {
   FALLBACK_IMAGE,
+  PRODUCT_COLUMNS,
   imgFallback,
   hasPrice,
   priceLabel,
@@ -32,7 +33,7 @@ function ProductDetail() {
     (async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*, categories(name, slug)")
+        .select(`${PRODUCT_COLUMNS}, categories(name, slug)`)
         .eq("slug", slug)
         .single();
 
@@ -44,7 +45,7 @@ function ProductDetail() {
       if (prod?.category_id) {
         const { data: rel } = await supabase
           .from("products")
-          .select("id, name, slug, brand, price, image_url, stock")
+          .select("id, name, slug, brand, image_url, stock")
           .eq("category_id", prod.category_id)
           .eq("active", true)
           .gt("stock", 0)

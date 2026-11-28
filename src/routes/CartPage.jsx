@@ -17,7 +17,7 @@ const CartPage = () => {
     if (!ids.length) return;
     supabase
       .from("products")
-      .select("id, name, slug, brand, sku, price, stock, image_url, active")
+      .select("id, name, slug, brand, sku, stock, image_url, active")
       .in("id", ids)
       .then(({ data, error }) => {
         if (!error && data) syncCart(data);

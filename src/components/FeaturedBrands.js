@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./FeaturedBrands.css";
 import { Link } from "react-router-dom";
 import { supabase } from "../utils/supabaseClient";
-import { BRAND_IMAGES, imgFallback, priceLabel, productImage } from "../utils/store";
+import { BRAND_IMAGES, PRODUCT_COLUMNS, imgFallback, priceLabel, productImage } from "../utils/store";
 
 const brands = ["AMD", "Intel", "Kingston", "NVIDIA"];
 
@@ -14,7 +14,7 @@ const FeaturedBrands = () => {
     const fetchBrandProducts = async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*")
+        .select(PRODUCT_COLUMNS)
         .eq("brand", selectedBrand)
         .eq("active", true)
         .gt("stock", 0)

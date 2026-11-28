@@ -35,16 +35,24 @@ const TABS = [
 ];
 
 // Supabase devuelve máximo 1000 filas por request: traemos en tandas.
+// Los costos y precios no se pueden leer directo de la tabla (ver
+// supabase/security.sql): el admin los trae con la función admin_products().
+// Si todavía no corriste security.sql, se usa la tabla como antes.
 async function fetchAllProducts() {
   const PAGE = 1000;
   let from = 0;
   let all = [];
+  let useAdminRpc = true; // se decide en cada carga, nunca queda "pegado"
   for (;;) {
-    const { data, error } = await supabase
-      .from("products")
+    const source = useAdminRpc ? supabase.rpc("admin_products") : supabase.from("products");
+    const { data, error } = await source
       .select("*, categories(name, slug)")
       .order("created_at", { ascending: false })
       .range(from, from + PAGE - 1);
+    if (error && useAdminRpc && error.code === "PGRST202") {
+      useAdminRpc = false; // la función no existe todavía
+      continue;
+    }
     if (error) throw error;
     all = all.concat(data || []);
     if (!data || data.length < PAGE) break;
